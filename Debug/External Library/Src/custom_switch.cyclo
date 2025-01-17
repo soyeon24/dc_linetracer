@@ -1,0 +1,5 @@
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_gpio.h:784:26:LL_GPIO_ReadInputPort	1
+C:/stm25/533/External Library/Inc/custom_delay.h:52:26:Custom_Delay_Get_SysTick	1
+../External Library/Src/custom_switch.c:27:13:Custom_Switch_Init_ButtonState	1
+../External Library/Src/custom_switch.c:36:16:Custom_Switch_State_Machine	10
+../External Library/Src/custom_switch.c:93:9:Custom_Switch_Read	8

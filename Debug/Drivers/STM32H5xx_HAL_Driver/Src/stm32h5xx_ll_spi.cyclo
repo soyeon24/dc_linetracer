@@ -1,0 +1,15 @@
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_spi.h:566:26:LL_SPI_IsEnabled	2
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_spi.h:892:22:LL_SPI_SetInternalSSLevel	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_spi.h:1148:26:LL_SPI_GetNSSPolarity	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_spi.h:2411:22:LL_SPI_SetCRCPolynomial	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_bus.h:1781:22:LL_APB1_GRP1_ForceReset	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_bus.h:1868:22:LL_APB1_GRP1_ReleaseReset	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_bus.h:2333:22:LL_APB2_GRP1_ForceReset	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_bus.h:2370:22:LL_APB2_GRP1_ReleaseReset	1
+../Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_spi.c:240:13:LL_SPI_DeInit	5
+../Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_spi.c:338:13:LL_SPI_Init	8
+../Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_spi.c:431:6:LL_SPI_StructInit	1
+../Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_spi.c:551:13:LL_I2S_DeInit	1
+../Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_spi.c:569:13:LL_I2S_Init	12
+../Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_spi.c:702:6:LL_I2S_StructInit	1
+../Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_spi.c:725:6:LL_I2S_ConfigPrescaler	1

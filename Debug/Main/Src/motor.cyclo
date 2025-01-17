@@ -1,0 +1,9 @@
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_tim.h:1959:22:LL_TIM_EnableCounter	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_tim.h:1970:22:LL_TIM_DisableCounter	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_tim.h:5768:22:LL_TIM_EnableIT_UPDATE	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_tim.h:5779:22:LL_TIM_DisableIT_UPDATE	1
+../Main/Src/motor.c:50:6:Motor_Start	1
+../Main/Src/motor.c:63:6:Motor_Stop	1
+../Main/Src/motor.c:72:6:Motor_L_TIM3_IRQ	2
+../Main/Src/motor.c:95:6:Motor_Test_Phase	1
+../Main/Src/motor.c:107:6:Motor_Test_Velocity	1

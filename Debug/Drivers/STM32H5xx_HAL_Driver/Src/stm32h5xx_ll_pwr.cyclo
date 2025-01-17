@@ -1,0 +1,3 @@
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_pwr.h:1755:22:LL_PWR_ClearFlag_STOP	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_pwr.h:1861:22:LL_PWR_ClearFlag_WU	1
+../Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_pwr.c:55:13:LL_PWR_DeInit	1

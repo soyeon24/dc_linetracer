@@ -1,0 +1,65 @@
+Main/Src/init.o: ../Main/Src/init.c C:/stm25/533/Main/Inc/init.h \
+ ../Core/Inc/main.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_adc.h \
+ ../Drivers/CMSIS/Device/ST/STM32H5xx/Include/stm32h5xx.h \
+ ../Drivers/CMSIS/Device/ST/STM32H5xx/Include/stm32h533xx.h \
+ ../Drivers/CMSIS/Include/core_cm33.h \
+ ../Drivers/CMSIS/Include/cmsis_version.h \
+ ../Drivers/CMSIS/Include/cmsis_compiler.h \
+ ../Drivers/CMSIS/Include/cmsis_gcc.h \
+ ../Drivers/CMSIS/Include/mpu_armv8.h \
+ ../Drivers/CMSIS/Device/ST/STM32H5xx/Include/system_stm32h5xx.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_icache.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_pwr.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_crs.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_rcc.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_bus.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_system.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_exti.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_cortex.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_utils.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_dma.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_spi.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_tim.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_gpio.h \
+ C:/stm25/533/Main/Inc/motor.h C:/stm25/533/Main/Inc/drive.h \
+ C:/stm25/533/Main/Inc/sensor.h \
+ C:/stm25/533/External\ Library/Inc/custom_oled.h \
+ C:/stm25/533/External\ Library/Inc/custom_switch.h \
+ C:/stm25/533/External\ Library/Inc/custom_delay.h \
+ C:/stm25/533/External\ Library/Inc/custom_exception.h \
+ C:/stm25/533/External\ Library/Inc/custom_filesystem.h \
+ C:/stm25/533/External\ Library/Inc/custom_flash.h
+C:/stm25/533/Main/Inc/init.h:
+../Core/Inc/main.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_adc.h:
+../Drivers/CMSIS/Device/ST/STM32H5xx/Include/stm32h5xx.h:
+../Drivers/CMSIS/Device/ST/STM32H5xx/Include/stm32h533xx.h:
+../Drivers/CMSIS/Include/core_cm33.h:
+../Drivers/CMSIS/Include/cmsis_version.h:
+../Drivers/CMSIS/Include/cmsis_compiler.h:
+../Drivers/CMSIS/Include/cmsis_gcc.h:
+../Drivers/CMSIS/Include/mpu_armv8.h:
+../Drivers/CMSIS/Device/ST/STM32H5xx/Include/system_stm32h5xx.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_icache.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_pwr.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_crs.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_rcc.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_bus.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_system.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_exti.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_cortex.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_utils.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_dma.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_spi.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_tim.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_gpio.h:
+C:/stm25/533/Main/Inc/motor.h:
+C:/stm25/533/Main/Inc/drive.h:
+C:/stm25/533/Main/Inc/sensor.h:
+C:/stm25/533/External\ Library/Inc/custom_oled.h:
+C:/stm25/533/External\ Library/Inc/custom_switch.h:
+C:/stm25/533/External\ Library/Inc/custom_delay.h:
+C:/stm25/533/External\ Library/Inc/custom_exception.h:
+C:/stm25/533/External\ Library/Inc/custom_filesystem.h:
+C:/stm25/533/External\ Library/Inc/custom_flash.h:

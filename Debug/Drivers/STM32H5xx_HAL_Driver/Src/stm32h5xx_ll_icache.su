@@ -1,0 +1,1 @@
+../Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_icache.c:94:6:LL_ICACHE_ConfigRegion	24	static

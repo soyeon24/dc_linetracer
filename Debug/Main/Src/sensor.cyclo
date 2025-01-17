@@ -1,0 +1,24 @@
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_adc.h:6830:22:LL_ADC_Enable	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_adc.h:6850:22:LL_ADC_Disable	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_adc.h:6955:22:LL_ADC_REG_StartConversion	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_adc.h:7073:26:LL_ADC_REG_ReadConversionData12	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_adc.h:7400:26:LL_ADC_IsActiveFlag_EOC	2
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_adc.h:7524:22:LL_ADC_ClearFlag_EOC	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_tim.h:1959:22:LL_TIM_EnableCounter	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_tim.h:1970:22:LL_TIM_DisableCounter	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_tim.h:5768:22:LL_TIM_EnableIT_UPDATE	1
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_tim.h:5779:22:LL_TIM_DisableIT_UPDATE	1
+C:/stm25/533/External Library/Inc/custom_delay.h:20:22:Custom_Delay_us	2
+C:/stm25/533/External Library/Inc/custom_delay.h:27:22:Custom_Delay_ms	2
+../Main/Src/sensor.c:36:6:Sensor_Start	1
+../Main/Src/sensor.c:44:6:Sensor_Stop	1
+../Main/Src/sensor.c:52:6:sensor_print16	1
+../Main/Src/sensor.c:61:26:Sensor_ADC_Read	2
+../Main/Src/sensor.c:72:26:Battery_ADC_Read	2
+../Main/Src/sensor.c:83:6:Sensor_TIM6_IRQ	5
+../Main/Src/sensor.c:117:6:Sensor_Test_Raw	2
+../Main/Src/sensor.c:130:6:Sensor_Calibration	7
+../Main/Src/sensor.c:164:6:position_test	4
+../Main/Src/sensor.c:180:6:window_position_test	5
+../Main/Src/sensor.c:197:6:window_position	16
+../Main/Src/sensor.c:284:6:test_window	4

@@ -1,0 +1,15 @@
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_spi.h:543:22:LL_SPI_Enable	16	static
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_spi.h:960:22:LL_SPI_StartMasterTransfer	16	static
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_spi.h:1242:22:LL_SPI_SetTransferDirection	16	static
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_spi.h:1645:26:LL_SPI_IsActiveFlag_TXP	16	static
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_spi.h:1755:26:LL_SPI_IsActiveFlag_TXC	16	static
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_spi.h:2370:22:LL_SPI_TransmitData8	16	static
+C:/stm25/533/External Library/Inc/custom_gpio.h:23:20:Custom_GPIO_Set	24	static
+../External Library/Src/custom_oled.c:109:20:Custom_OLED_SPI_Tramsnit_Blocking	16	static
+../External Library/Src/custom_oled.c:122:20:Custom_OLED_Write_Command	24	static
+../External Library/Src/custom_oled.c:140:20:Custom_OLED_Write_Data	24	static
+../External Library/Src/custom_oled.c:180:20:Custom_OLED_Set_Window	32	static
+../External Library/Src/custom_oled.c:191:6:Custom_OLED_Clear	16	static
+../External Library/Src/custom_oled.c:201:6:Custom_OLED_Init	56	static
+../External Library/Src/custom_oled.c:242:5:Custom_OLED_Putchar	48	static
+../External Library/Src/custom_oled.c:270:6:Custom_OLED_Printf	568	static
