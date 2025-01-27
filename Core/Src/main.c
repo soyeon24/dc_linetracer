@@ -59,7 +59,6 @@ static void MX_TIM7_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_ADC2_Init(void);
 static void MX_SPI2_Init(void);
-static void MX_SPI3_Init(void);
 static void MX_ICACHE_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -118,7 +117,6 @@ int main(void)
   MX_ADC1_Init();
   MX_ADC2_Init();
   MX_SPI2_Init();
-  MX_SPI3_Init();
   MX_ICACHE_Init();
   /* USER CODE BEGIN 2 */
 
@@ -464,71 +462,6 @@ static void MX_SPI2_Init(void)
 }
 
 /**
-  * @brief SPI3 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_SPI3_Init(void)
-{
-
-  /* USER CODE BEGIN SPI3_Init 0 */
-
-  /* USER CODE END SPI3_Init 0 */
-
-  LL_SPI_InitTypeDef SPI_InitStruct = {0};
-
-  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-  LL_RCC_SetSPIClockSource(LL_RCC_SPI3_CLKSOURCE_PLL1Q);
-
-  /* Peripheral clock enable */
-  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_SPI3);
-
-  LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB);
-  /**SPI3 GPIO Configuration
-  PB1   ------> SPI3_SCK
-  PB2   ------> SPI3_MOSI
-  */
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_1;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  GPIO_InitStruct.Alternate = LL_GPIO_AF_4;
-  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_2;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  GPIO_InitStruct.Alternate = LL_GPIO_AF_7;
-  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /* USER CODE BEGIN SPI3_Init 1 */
-
-  /* USER CODE END SPI3_Init 1 */
-  /* SPI3 parameter configuration*/
-  SPI_InitStruct.TransferDirection = LL_SPI_SIMPLEX_TX;
-  SPI_InitStruct.Mode = LL_SPI_MODE_MASTER;
-  SPI_InitStruct.DataWidth = LL_SPI_DATAWIDTH_16BIT;
-  SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_LOW;
-  SPI_InitStruct.ClockPhase = LL_SPI_PHASE_1EDGE;
-  SPI_InitStruct.NSS = LL_SPI_NSS_SOFT;
-  SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV8;
-  SPI_InitStruct.BitOrder = LL_SPI_MSB_FIRST;
-  SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
-  SPI_InitStruct.CRCPoly = 0x7;
-  LL_SPI_Init(SPI3, &SPI_InitStruct);
-  LL_SPI_SetStandard(SPI3, LL_SPI_PROTOCOL_MOTOROLA);
-  LL_SPI_EnableNSSPulseMgt(SPI3);
-  /* USER CODE BEGIN SPI3_Init 2 */
-
-  /* USER CODE END SPI3_Init 2 */
-
-}
-
-/**
   * @brief TIM1 Initialization Function
   * @param None
   * @retval None
@@ -645,6 +578,9 @@ static void MX_TIM3_Init(void)
   /* USER CODE END TIM3_Init 0 */
 
   LL_TIM_InitTypeDef TIM_InitStruct = {0};
+  LL_TIM_OC_InitTypeDef TIM_OC_InitStruct = {0};
+
+  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* Peripheral clock enable */
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM3);
@@ -658,16 +594,43 @@ static void MX_TIM3_Init(void)
   /* USER CODE END TIM3_Init 1 */
   TIM_InitStruct.Prescaler = 0;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 65535;
+  TIM_InitStruct.Autoreload = 499;
   TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
   LL_TIM_Init(TIM3, &TIM_InitStruct);
   LL_TIM_DisableARRPreload(TIM3);
   LL_TIM_SetClockSource(TIM3, LL_TIM_CLOCKSOURCE_INTERNAL);
+  LL_TIM_OC_EnablePreload(TIM3, LL_TIM_CHANNEL_CH1);
+  TIM_OC_InitStruct.OCMode = LL_TIM_OCMODE_PWM1;
+  TIM_OC_InitStruct.OCState = LL_TIM_OCSTATE_DISABLE;
+  TIM_OC_InitStruct.OCNState = LL_TIM_OCSTATE_DISABLE;
+  TIM_OC_InitStruct.CompareValue = 0;
+  TIM_OC_InitStruct.OCPolarity = LL_TIM_OCPOLARITY_HIGH;
+  LL_TIM_OC_Init(TIM3, LL_TIM_CHANNEL_CH1, &TIM_OC_InitStruct);
+  LL_TIM_OC_DisableFast(TIM3, LL_TIM_CHANNEL_CH1);
+  LL_TIM_OC_EnablePreload(TIM3, LL_TIM_CHANNEL_CH2);
+  LL_TIM_OC_Init(TIM3, LL_TIM_CHANNEL_CH2, &TIM_OC_InitStruct);
+  LL_TIM_OC_DisableFast(TIM3, LL_TIM_CHANNEL_CH2);
+  LL_TIM_OC_EnablePreload(TIM3, LL_TIM_CHANNEL_CH4);
+  LL_TIM_OC_Init(TIM3, LL_TIM_CHANNEL_CH4, &TIM_OC_InitStruct);
+  LL_TIM_OC_DisableFast(TIM3, LL_TIM_CHANNEL_CH4);
   LL_TIM_SetTriggerOutput(TIM3, LL_TIM_TRGO_RESET);
   LL_TIM_DisableMasterSlaveMode(TIM3);
   /* USER CODE BEGIN TIM3_Init 2 */
 
   /* USER CODE END TIM3_Init 2 */
+  LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOC);
+  /**TIM3 GPIO Configuration
+  PC6   ------> TIM3_CH1
+  PC7   ------> TIM3_CH2
+  PC9   ------> TIM3_CH4
+  */
+  GPIO_InitStruct.Pin = Motor_L1_Pin|Motor_L2_Pin|Motor_L3_Pin;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  GPIO_InitStruct.Alternate = LL_GPIO_AF_2;
+  LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 }
 
@@ -684,6 +647,9 @@ static void MX_TIM4_Init(void)
   /* USER CODE END TIM4_Init 0 */
 
   LL_TIM_InitTypeDef TIM_InitStruct = {0};
+  LL_TIM_OC_InitTypeDef TIM_OC_InitStruct = {0};
+
+  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* Peripheral clock enable */
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM4);
@@ -702,11 +668,38 @@ static void MX_TIM4_Init(void)
   LL_TIM_Init(TIM4, &TIM_InitStruct);
   LL_TIM_DisableARRPreload(TIM4);
   LL_TIM_SetClockSource(TIM4, LL_TIM_CLOCKSOURCE_INTERNAL);
+  LL_TIM_OC_EnablePreload(TIM4, LL_TIM_CHANNEL_CH1);
+  TIM_OC_InitStruct.OCMode = LL_TIM_OCMODE_PWM1;
+  TIM_OC_InitStruct.OCState = LL_TIM_OCSTATE_DISABLE;
+  TIM_OC_InitStruct.OCNState = LL_TIM_OCSTATE_DISABLE;
+  TIM_OC_InitStruct.CompareValue = 0;
+  TIM_OC_InitStruct.OCPolarity = LL_TIM_OCPOLARITY_HIGH;
+  LL_TIM_OC_Init(TIM4, LL_TIM_CHANNEL_CH1, &TIM_OC_InitStruct);
+  LL_TIM_OC_DisableFast(TIM4, LL_TIM_CHANNEL_CH1);
+  LL_TIM_OC_EnablePreload(TIM4, LL_TIM_CHANNEL_CH2);
+  LL_TIM_OC_Init(TIM4, LL_TIM_CHANNEL_CH2, &TIM_OC_InitStruct);
+  LL_TIM_OC_DisableFast(TIM4, LL_TIM_CHANNEL_CH2);
+  LL_TIM_OC_EnablePreload(TIM4, LL_TIM_CHANNEL_CH3);
+  LL_TIM_OC_Init(TIM4, LL_TIM_CHANNEL_CH3, &TIM_OC_InitStruct);
+  LL_TIM_OC_DisableFast(TIM4, LL_TIM_CHANNEL_CH3);
   LL_TIM_SetTriggerOutput(TIM4, LL_TIM_TRGO_RESET);
   LL_TIM_DisableMasterSlaveMode(TIM4);
   /* USER CODE BEGIN TIM4_Init 2 */
 
   /* USER CODE END TIM4_Init 2 */
+  LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB);
+  /**TIM4 GPIO Configuration
+  PB6   ------> TIM4_CH1
+  PB7   ------> TIM4_CH2
+  PB8   ------> TIM4_CH3
+  */
+  GPIO_InitStruct.Pin = Motor_R1_Pin|Motor_R2_Pin|Motor_R3_Pin;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  GPIO_InitStruct.Alternate = LL_GPIO_AF_2;
+  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
@@ -862,22 +855,20 @@ static void MX_GPIO_Init(void)
 
   /**/
   LL_GPIO_ResetOutputPin(GPIOC, GPIO_EXTI13_Pin|LL_GPIO_PIN_0|Sensor_Mux1_Pin|Senosor_Mux2_Pin
-                          |Sensor_MuxX_Pin|USART3_RX_Pin|MotorL_MODE_Pin|MotorL_OCPM_Pin
-                          |MotorL_nSLEEP_Pin);
+                          |Sensor_MuxX_Pin|USART3_RX_Pin|Motor_L4_Pin);
 
   /**/
-  LL_GPIO_ResetOutputPin(GPIOA, LED2_Pin|PICO_CS1_Pin|PICO_CS2_Pin);
+  LL_GPIO_ResetOutputPin(GPIOA, LED2_Pin|Motor_L5_Pin|Motor_R5_Pin);
 
   /**/
-  LL_GPIO_ResetOutputPin(GPIOB, OLED_CS_Pin|OLED_DC_Pin|MotorR_Mode_Pin|MotorR_OCPM_Pin);
+  LL_GPIO_ResetOutputPin(GPIOB, Motor_R6_Pin|Motor_L6_Pin|OLED_CS_Pin|OLED_DC_Pin);
 
   /**/
-  LL_GPIO_ResetOutputPin(MotorR_nSLEEP_GPIO_Port, MotorR_nSLEEP_Pin);
+  LL_GPIO_ResetOutputPin(Motor_R4_GPIO_Port, Motor_R4_Pin);
 
   /**/
   GPIO_InitStruct.Pin = GPIO_EXTI13_Pin|LL_GPIO_PIN_0|Sensor_Mux1_Pin|Senosor_Mux2_Pin
-                          |Sensor_MuxX_Pin|USART3_RX_Pin|MotorL_MODE_Pin|MotorL_OCPM_Pin
-                          |MotorL_nSLEEP_Pin;
+                          |Sensor_MuxX_Pin|USART3_RX_Pin|Motor_L4_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
@@ -885,7 +876,7 @@ static void MX_GPIO_Init(void)
   LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /**/
-  GPIO_InitStruct.Pin = LED2_Pin|PICO_CS1_Pin|PICO_CS2_Pin;
+  GPIO_InitStruct.Pin = LED2_Pin|Motor_L5_Pin|Motor_R5_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
@@ -893,7 +884,7 @@ static void MX_GPIO_Init(void)
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /**/
-  GPIO_InitStruct.Pin = OLED_CS_Pin|OLED_DC_Pin|MotorR_Mode_Pin|MotorR_OCPM_Pin;
+  GPIO_InitStruct.Pin = Motor_R6_Pin|Motor_L6_Pin|OLED_CS_Pin|OLED_DC_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
@@ -901,30 +892,18 @@ static void MX_GPIO_Init(void)
   LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /**/
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_9;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /**/
-  GPIO_InitStruct.Pin = MotorR_nSLEEP_Pin;
+  GPIO_InitStruct.Pin = Motor_R4_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(MotorR_nSLEEP_GPIO_Port, &GPIO_InitStruct);
+  LL_GPIO_Init(Motor_R4_GPIO_Port, &GPIO_InitStruct);
 
   /**/
   GPIO_InitStruct.Pin = SWL_Pin|SWR_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /**/
-  GPIO_InitStruct.Pin = MotorR_nFAULT_Pin;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(MotorR_nFAULT_GPIO_Port, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */

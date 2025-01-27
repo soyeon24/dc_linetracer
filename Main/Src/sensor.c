@@ -25,13 +25,8 @@ int32_t normalized_value = 0;
 int16_t position_value = 0;
 uint8_t sensorThreshold = 100;
 
-typedef struct window_t{
-	uint16_t LEFT;
-	uint16_t CENTER;
-	uint16_t RIGHT;
-};
+window_t Window;
 
-struct window_t Window;
 
 void Sensor_Start() {
 	LL_ADC_Enable(ADC1);
@@ -202,7 +197,7 @@ void window_position(int16_t position){
 		Window.RIGHT = 0;
 	}
 	else if(position <-26000){
-		Window.CENTER = 0xF000;
+		Window.CENTER = 0xf000;
 		Window.LEFT = 0;
 		Window.RIGHT =0x0FFF;
 	}

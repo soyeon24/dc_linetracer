@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "sensor.h"
+#include "motor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -205,10 +206,11 @@ uwTick++;
 void TIM3_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM3_IRQn 0 */
+	Motor_L_TIM3_IRQ();
 
   /* USER CODE END TIM3_IRQn 0 */
   /* USER CODE BEGIN TIM3_IRQn 1 */
-
+LL_TIM_ClearFlag_UPDATE(TIM3);
   /* USER CODE END TIM3_IRQn 1 */
 }
 
@@ -218,9 +220,11 @@ void TIM3_IRQHandler(void)
 void TIM4_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM4_IRQn 0 */
+	Motor_R_TIM4_IRQ();
 
   /* USER CODE END TIM4_IRQn 0 */
   /* USER CODE BEGIN TIM4_IRQn 1 */
+	LL_TIM_ClearFlag_UPDATE(TIM4);
 
   /* USER CODE END TIM4_IRQn 1 */
 }

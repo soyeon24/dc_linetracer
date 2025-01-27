@@ -129,6 +129,8 @@ void Init() {
 	 */
 	uint8_t sw =0;
 	int8_t counting =0;
+	Motor_Start();
+	while(1);
 	test_window();
 	Sensor_Test_Raw();
 	int num_of_menu = sizeof(in_menu) / sizeof(In_Menu);

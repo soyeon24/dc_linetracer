@@ -10,4 +10,16 @@ void Sensor_TIM6_IRQ();
 void test_window();
 
 extern float_t batteryVolt;
+extern int16_t position_value;
+extern uint16_t SensorState;
+extern int32_t whiteMax[16];
+extern int32_t blackMax[16];
+
+typedef struct{
+	uint16_t LEFT;
+	uint16_t CENTER;
+	uint16_t RIGHT;
+}window_t;
+
+extern window_t Window;
 

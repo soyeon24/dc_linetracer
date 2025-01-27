@@ -21,7 +21,8 @@ Core/Src/stm32h5xx_it.o: ../Core/Src/stm32h5xx_it.c ../Core/Inc/main.h \
  ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_spi.h \
  ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_tim.h \
  ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_gpio.h \
- ../Core/Inc/stm32h5xx_it.h C:/stm25/533/Main/Inc/sensor.h
+ ../Core/Inc/stm32h5xx_it.h C:/stm25/533/Main/Inc/sensor.h \
+ C:/stm25/533/Main/Inc/motor.h
 ../Core/Inc/main.h:
 ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_adc.h:
 ../Drivers/CMSIS/Device/ST/STM32H5xx/Include/stm32h5xx.h:
@@ -47,3 +48,4 @@ Core/Src/stm32h5xx_it.o: ../Core/Src/stm32h5xx_it.c ../Core/Inc/main.h \
 ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_gpio.h:
 ../Core/Inc/stm32h5xx_it.h:
 C:/stm25/533/Main/Inc/sensor.h:
+C:/stm25/533/Main/Inc/motor.h:
