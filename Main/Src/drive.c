@@ -25,24 +25,25 @@
 #define MARK_RIGHT 2
 #define MARK_END 4
 
+uint8_t mark_read[400];
 uint16_t positionCenter[15] = { -28000, -24000, -20000, -16000, -12000, -8000,
 		-4000, 0, 4000, 8000, 12000, 16000, 20000, 24000, 28000 };
-uint16_t center;
-volatile uint16_t sensorState_Sum = 0;
 
+volatile uint16_t sensorState_Sum = 0;
+volatile uint8_t state = STATE_IDLE;
 void Drive_Start() {
 	LL_TIM_EnableCounter(TIM7);
 	LL_TIM_EnableIT_UPDATE(TIM7);
 }
 
-void Drive_Stop(){
+void Drive_Stop() {
 	LL_TIM_DisableCounter(TIM7);
 	LL_TIM_DisableIT_UPDATE(TIM7);
 }
 
-__STATIC_INLINE state_machine() {
+__STATIC_INLINE uint8_t state_machine() {
 	uint8_t mark = 0;
-	uint8_t state;
+
 	static bool cross_decision = false;
 
 	switch (state) {
@@ -73,13 +74,12 @@ __STATIC_INLINE state_machine() {
 		if (cross_decision) {
 			mark = MARK_CROSS;
 			cross_decision = false;
-		} else if ((sensorState_Sum&Window.LEFT)&&(sensorState_Sum&Window.RIGHT)) {
+		} else if ((sensorState_Sum & Window.LEFT)
+				&& (sensorState_Sum & Window.RIGHT)) {
 			mark = MARK_END;
-		}
-		else if(sensorState_Sum&Window.LEFT){
+		} else if (sensorState_Sum & Window.LEFT) {
 			mark = MARK_LEFT;
-		}
-		else if(sensorState_Sum&Window.RIGHT){
+		} else if (sensorState_Sum & Window.RIGHT) {
 			mark = MARK_RIGHT;
 		}
 
@@ -92,7 +92,13 @@ __STATIC_INLINE state_machine() {
 }
 
 void Drive_First() {
-	center = 7;
+	volatile uint8_t temp_mark_read[400];
+	volatile uint8_t endmark_cnt = 0;
+	volatile uint8_t cross_cnt = 0;
+	volatile uint8_t markL_cnt = 0;
+	volatile uint8_t markR_cnt = 0;
+	volatile uint8_t mark;
+	uint32_t index_mark = 0;
 	if (whiteMax[1] - blackMax[1] == 0) {
 		while (1) {
 			Custom_OLED_Printf("/r do cali");
@@ -101,9 +107,72 @@ void Drive_First() {
 	Sensor_Start();
 	Motor_Start();
 	Drive_Start();
+	while (endmark_cnt < 2) {
+			mark = state_machine();
+			if(mark == MARK_END){
+				endmark_cnt++;
 
-
+			}
+			else if(mark == MARK_CROSS){
+				cross_cnt++;
+			}
+			else if(mark == MARK_LEFT){
+				markL_cnt++;
+			}
+			else if(mark == MARK_RIGHT){
+				markR_cnt++;
+			}
+			temp_mark_read[index_mark] = mark;
+			index_mark++;
+			if(!(SensorState & 0xffff)){
+				break;
+			}
+	}
 	Motor_Stop();
 	Sensor_Stop();
 	Drive_Stop();
+	for(int i = 0; i<index_mark;i++){
+		mark_read[i] = temp_mark_read[i];
+	}
 }
+
+void state_debug() {
+		uint8_t endmark_cnt = 0;
+		uint8_t mark;
+		Sensor_Start();
+
+		int prev_mark = 0;
+
+		while (Custom_Switch_Read() != CUSTOM_SW_BOTH) {
+			mark = state_machine();
+			if (mark == 1) Custom_OLED_Printf("left  ");
+			else if (mark == 2) Custom_OLED_Printf("right ");
+			else if (mark == 3) Custom_OLED_Printf("end   ");
+			else if (mark == 8) Custom_OLED_Printf("cross ");
+			else if (mark == 0) Custom_OLED_Printf("NONE  ");
+
+			if (mark == MARK_END) endmark_cnt++;
+			if (prev_mark != mark) Custom_Delay_ms(500);
+			prev_mark = mark;
+		}
+		Sensor_Stop();
+	}
+
+void mark_check() {
+	int markcheaki = 0;
+	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
+
+		if (sw == CUSTOM_SW_1) {
+			markcheaki--;
+		}
+		else if (sw == CUSTOM_SW_2) {
+			markcheaki++;
+		}
+		Custom_OLED_Printf("%d ", mark_read[markcheaki]);
+	}
+
+	Custom_OLED_Clear();
+
+	markcheaki = 0;
+}
+
