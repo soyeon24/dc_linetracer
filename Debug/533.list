@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000036  00000000  00000000  0000a1d8  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0000be76  00000000  00000000  0000a20e  2**0
+ 12 .debug_info   0000beb2  00000000  00000000  0000a20e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 0000227a  00000000  00000000  00016084  2**0
+ 13 .debug_abbrev 00002279  00000000  00000000  000160c0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000bd8  00000000  00000000  00018300  2**3
+ 14 .debug_aranges 00000bd8  00000000  00000000  00018340  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 000008c6  00000000  00000000  00018ed8  2**0
+ 15 .debug_rnglists 000008c6  00000000  00000000  00018f18  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  000285dd  00000000  00000000  0001979e  2**0
+ 16 .debug_macro  000285dd  00000000  00000000  000197de  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000bf7c  00000000  00000000  00041d7b  2**0
+ 17 .debug_line   0000bf7c  00000000  00000000  00041dbb  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000e9b73  00000000  00000000  0004dcf7  2**0
+ 18 .debug_str    000e9b96  00000000  00000000  0004dd37  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  0013786a  2**0
+ 19 .comment      00000043  00000000  00000000  001378cd  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000041b0  00000000  00000000  001378b0  2**2
+ 20 .debug_frame  000041b0  00000000  00000000  00137910  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 0000003b  00000000  00000000  0013ba60  2**0
+ 21 .debug_line_str 0000003b  00000000  00000000  0013bac0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -10339,8 +10339,8 @@ __STATIC_INLINE void Custom_Delay_Init_SysTick() {
  80045ac:	e000e010 	.word	0xe000e010
 
 080045b0 <Init>:
-In_Menu in_menu[] = {
-		{"/wcheck delay", check_delay}
+		{"mark check", mark_check},
+		{"state debug",state_debug}
 };
 
 

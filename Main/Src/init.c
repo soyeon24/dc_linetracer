@@ -86,7 +86,11 @@ void check_delay() {
 }
 
 In_Menu in_menu[] = {
-		{"/wcheck delay", check_delay}
+		{"/wcheck delay", check_delay},
+		{"calibration", Sensor_Calibration},
+		{"first drive", Drive_First},
+		{"mark check", mark_check},
+		{"state debug",state_debug}
 };
 
 
