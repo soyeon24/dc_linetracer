@@ -31,6 +31,7 @@ uint16_t positionCenter[15] = { -28000, -24000, -20000, -16000, -12000, -8000,
 
 volatile uint16_t sensorState_Sum = 0;
 volatile uint8_t state = STATE_IDLE;
+volatile int index_markcnt = 0;
 void Drive_Start() {
 	LL_TIM_EnableCounter(TIM7);
 	LL_TIM_EnableIT_UPDATE(TIM7);
@@ -108,55 +109,87 @@ void Drive_First() {
 	Motor_Start();
 	Drive_Start();
 	while (endmark_cnt < 2) {
-			mark = state_machine();
-			if(mark == MARK_END){
-				endmark_cnt++;
+		mark = state_machine();
+		if (mark == MARK_END) {
+			endmark_cnt++;
 
-			}
-			else if(mark == MARK_CROSS){
-				cross_cnt++;
-			}
-			else if(mark == MARK_LEFT){
-				markL_cnt++;
-			}
-			else if(mark == MARK_RIGHT){
-				markR_cnt++;
-			}
+		} else if (mark == MARK_CROSS) {
+			cross_cnt++;
+		} else if (mark == MARK_LEFT) {
+			markL_cnt++;
+		} else if (mark == MARK_RIGHT) {
+			markR_cnt++;
+		}
+		if(!mark){
 			temp_mark_read[index_mark] = mark;
 			index_mark++;
-			if(!(SensorState & 0xffff)){
-				break;
-			}
+		}
+		if (!(SensorState & 0xffff)) {
+			break;
+		}
 	}
 	Motor_Stop();
 	Sensor_Stop();
 	Drive_Stop();
-	for(int i = 0; i<index_mark;i++){
+	for (int i = 0; i < index_mark; i++) {
 		mark_read[i] = temp_mark_read[i];
 	}
+
+	uint8_t sw = 0;
+	if (mark == MARK_END) {
+		Custom_OLED_Printf("end mark");
+	} else {
+		Custom_OLED_Printf("line out");
+	}
+	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
+	}
+	Custom_OLED_Clear();
+	Custom_OLED_Printf(
+			"end %d/1cross %d/2Left %d/3Right %d/4save?right/5no?left",
+			endmark_cnt, cross_cnt, markL_cnt, markR_cnt);
+	index_markcnt = index_mark;
+	while (1) {
+		sw = Custom_Switch_Read();
+		if (sw == CUSTOM_SW_2) {
+			for (int i = 0; i < (index_markcnt); i++) {
+				mark_read[i] = temp_mark_read[i];
+			}
+			break;
+		} else if (sw == CUSTOM_SW_1) {
+			break;
+		}
+	}
+	Custom_OLED_Clear();
 }
 
 void state_debug() {
-		uint8_t endmark_cnt = 0;
-		uint8_t mark;
-		Sensor_Start();
+	uint8_t endmark_cnt = 0;
+	uint8_t mark;
+	Sensor_Start();
 
-		int prev_mark = 0;
+	int prev_mark = 0;
 
-		while (Custom_Switch_Read() != CUSTOM_SW_BOTH) {
-			mark = state_machine();
-			if (mark == 1) Custom_OLED_Printf("left  ");
-			else if (mark == 2) Custom_OLED_Printf("right ");
-			else if (mark == 3) Custom_OLED_Printf("end   ");
-			else if (mark == 8) Custom_OLED_Printf("cross ");
-			else if (mark == 0) Custom_OLED_Printf("NONE  ");
+	while (Custom_Switch_Read() != CUSTOM_SW_BOTH) {
+		mark = state_machine();
+		if (mark == 1)
+			Custom_OLED_Printf("left  ");
+		else if (mark == 2)
+			Custom_OLED_Printf("right ");
+		else if (mark == 3)
+			Custom_OLED_Printf("end   ");
+		else if (mark == 8)
+			Custom_OLED_Printf("cross ");
+		else if (mark == 0)
+			Custom_OLED_Printf("NONE  ");
 
-			if (mark == MARK_END) endmark_cnt++;
-			if (prev_mark != mark) Custom_Delay_ms(500);
-			prev_mark = mark;
-		}
-		Sensor_Stop();
+		if (mark == MARK_END)
+			endmark_cnt++;
+		if (prev_mark != mark)
+			Custom_Delay_ms(500);
+		prev_mark = mark;
 	}
+	Sensor_Stop();
+}
 
 void mark_check() {
 	int markcheaki = 0;
@@ -164,8 +197,7 @@ void mark_check() {
 
 		if (sw == CUSTOM_SW_1) {
 			markcheaki--;
-		}
-		else if (sw == CUSTOM_SW_2) {
+		} else if (sw == CUSTOM_SW_2) {
 			markcheaki++;
 		}
 		Custom_OLED_Printf("%d ", mark_read[markcheaki]);

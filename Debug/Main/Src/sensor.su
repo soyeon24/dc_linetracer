@@ -10,15 +10,15 @@
 ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_tim.h:5779:22:LL_TIM_DisableIT_UPDATE	16	static
 C:/stm25/533/External Library/Inc/custom_delay.h:20:22:Custom_Delay_us	16	static
 C:/stm25/533/External Library/Inc/custom_delay.h:27:22:Custom_Delay_ms	24	static
-../Main/Src/sensor.c:31:6:Sensor_Start	8	static
-../Main/Src/sensor.c:39:6:Sensor_Stop	8	static
-../Main/Src/sensor.c:47:6:sensor_print16	120	static
-../Main/Src/sensor.c:56:26:Sensor_ADC_Read	16	static,ignoring_inline_asm
-../Main/Src/sensor.c:67:26:Battery_ADC_Read	16	static,ignoring_inline_asm
-../Main/Src/sensor.c:78:6:Sensor_TIM6_IRQ	16	static
-../Main/Src/sensor.c:112:6:Sensor_Test_Raw	8	static
-../Main/Src/sensor.c:125:6:Sensor_Calibration	16	static
-../Main/Src/sensor.c:159:6:position_test	16	static
-../Main/Src/sensor.c:175:6:window_position_test	16	static
-../Main/Src/sensor.c:192:6:window_position	16	static
-../Main/Src/sensor.c:279:6:test_window	16	static
+../Main/Src/sensor.c:40:6:Sensor_Start	8	static
+../Main/Src/sensor.c:48:6:Sensor_Stop	8	static
+../Main/Src/sensor.c:56:6:sensor_print16	120	static
+../Main/Src/sensor.c:65:26:Sensor_ADC_Read	16	static,ignoring_inline_asm
+../Main/Src/sensor.c:77:26:Battery_ADC_Read	16	static,ignoring_inline_asm
+../Main/Src/sensor.c:89:6:Sensor_TIM6_IRQ	16	static
+../Main/Src/sensor.c:134:6:Sensor_Test_Raw	8	static
+../Main/Src/sensor.c:147:6:Sensor_Calibration	16	static
+../Main/Src/sensor.c:181:6:position_test	16	static
+../Main/Src/sensor.c:199:6:window_position_test	16	static
+../Main/Src/sensor.c:218:6:window_position	16	static
+../Main/Src/sensor.c:290:6:test_window	16	static

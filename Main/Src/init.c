@@ -87,6 +87,8 @@ void check_delay() {
 
 In_Menu in_menu[] = {
 		{"/wcheck delay", check_delay},
+		{"sensor Raw", Sensor_Test_Raw},
+		{"window test", test_window},
 		{"calibration", Sensor_Calibration},
 		{"first drive", Drive_First},
 		{"mark check", mark_check},
@@ -133,10 +135,8 @@ void Init() {
 	 */
 	uint8_t sw =0;
 	int8_t counting =0;
-	Motor_Start();
-	while(1);
-	test_window();
-	Sensor_Test_Raw();
+
+
 	int num_of_menu = sizeof(in_menu) / sizeof(In_Menu);
 		//위의 In menu 구조체의 연속을 배열로 표현한 것임 배열1칸(?)이 구조체 하나와 같은거
 		Custom_OLED_Clear();
@@ -155,9 +155,7 @@ void Init() {
 				Custom_OLED_Printf(" %s", in_menu[counting].name);
 			}
 			Custom_OLED_Clear();
-
 			in_menu[counting].func();
-
 			Custom_OLED_Clear();
 			Custom_OLED_Printf("BYE!");
 		}

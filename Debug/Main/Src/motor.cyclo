@@ -9,7 +9,7 @@
 ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_tim.h:5779:22:LL_TIM_DisableIT_UPDATE	1
 ../Main/Src/motor.c:48:6:Motor_Start	1
 ../Main/Src/motor.c:75:6:Motor_Stop	1
-../Main/Src/motor.c:91:6:Motor_L_TIM3_IRQ	8
-../Main/Src/motor.c:122:6:Motor_R_TIM4_IRQ	2
-../Main/Src/motor.c:154:6:Motor_Test_Phase	1
-../Main/Src/motor.c:166:6:Motor_Test_Velocity	1
+../Main/Src/motor.c:91:6:Motor_L_TIM3_IRQ	6
+../Main/Src/motor.c:124:6:Motor_R_TIM4_IRQ	6
+../Main/Src/motor.c:159:6:Motor_Test_Phase	4
+../Main/Src/motor.c:184:6:Motor_Test_Velocity	1

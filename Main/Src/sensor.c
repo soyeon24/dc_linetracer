@@ -2,6 +2,9 @@
  * sensor.c
  */
 
+#define MIN(x,y) ((x<y)?(x):(y))
+#define MAX(x,y) ((x>y)? (x):(y))
+
 #include "main.h"
 #include "sensor.h"
 #include "motor.h"
@@ -14,19 +17,25 @@
 //#include "custom_exception.h"
 
 int32_t sensorRaw[16] = { 0 };
-float_t batteryVolt = 0;
-int32_t whiteMax[16];
-int32_t blackMax[16];
-int32_t normalized[16];
+float_t batteryVolt;
+int32_t whiteMax[16] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+int32_t blackMax[16] = {0};
+int32_t normalized[16] = {0};
 uint8_t sw;
-int32_t position[16] = {-30000, -26000, -22000, -18000, -14000, -10000, -6000, -2000, 2000, 6000, 10000,14000,18000,22000,26000,30000};
-uint16_t SensorState =0;
-int32_t normalized_value = 0;
-int16_t position_value = 0;
+int32_t position[16] = { -30000, -26000, -22000, -18000, -14000, -10000, -6000,
+		-2000, 2000, 6000, 10000, 14000, 18000, 22000, 26000, 30000 };
+uint32_t windowCenter[15] = { 0xffff, 0xf000, 0xfc00, 0x7e00, 0x3f00, 0x1f80,
+		0x0fc0, 0x07e0, 0x03f0, 0x01f8, 0x00fc, 0x007e, 0x003f, 0x001f, 0x000f };
+//uint32_t positionCenter[15] = { -28000, -24000, -20000, -16000, -12000, -8000,
+//		-4000, 0, 4000, 8000, 12000, 16000, 20000, 24000, 28000 };
+
+uint16_t SensorState = 0;
+volatile uint32_t normalized_value = 0;
+volatile int32_t position_value = 0;
 uint8_t sensorThreshold = 100;
 
 window_t Window;
-
+volatile uint32_t center = 7;
 
 void Sensor_Start() {
 	LL_ADC_Enable(ADC1);
@@ -57,7 +66,8 @@ __STATIC_INLINE uint16_t Sensor_ADC_Read() {
 	__disable_irq();
 	LL_ADC_ClearFlag_EOC(ADC1);
 	LL_ADC_REG_StartConversion(ADC1);
-	while (!LL_ADC_IsActiveFlag_EOC(ADC1));
+	while (!LL_ADC_IsActiveFlag_EOC(ADC1))
+		;
 	uint16_t adcValue = LL_ADC_REG_ReadConversionData12(ADC1);
 	LL_ADC_ClearFlag_EOC(ADC1);
 	__enable_irq();
@@ -68,7 +78,8 @@ __STATIC_INLINE uint16_t Battery_ADC_Read() {
 	__disable_irq();
 	LL_ADC_ClearFlag_EOC(ADC2);
 	LL_ADC_REG_StartConversion(ADC2);
-	while (!LL_ADC_IsActiveFlag_EOC(ADC2));
+	while (!LL_ADC_IsActiveFlag_EOC(ADC2))
+		;
 	uint16_t adcValue = LL_ADC_REG_ReadConversionData12(ADC2);
 	LL_ADC_ClearFlag_EOC(ADC2);
 	__enable_irq();
@@ -79,6 +90,7 @@ void Sensor_TIM6_IRQ() {
 	static uint32_t i = 0;
 	GPIOC->ODR = (GPIOC->ODR & (~0x07)) + i;
 	GPIOC->ODR |= 0x08;
+	Sensor_ADC_Read();
 	uint8_t rawL = Sensor_ADC_Read() >> 4;
 	uint8_t rawR = Sensor_ADC_Read() >> 4;
 	GPIOC->ODR &= ~0x08;
@@ -101,18 +113,28 @@ void Sensor_TIM6_IRQ() {
 	else
 		normalized[i + 8] = 255 * (rawR - blackMax[i + 8])
 				/ (whiteMax[i + 8] - blackMax[i + 8]);
-
-	i = (i + 1) & 0x07;
 	SensorState = (SensorState & ~(0x101 << i))
 			| ((normalized[i] > sensorThreshold) << (i))
 			| ((normalized[i + 8] > sensorThreshold) << (i + 8));
-
+	if (i == 0x07) {
+		int32_t sigma_p = 0;
+		normalized_value = 0;
+		for (uint8_t k = MAX(0,center - 2); k < MIN(15,center+4); k++) {
+			sigma_p += *(position + k) * *(normalized + k);
+			normalized_value += *(normalized + k);
+		}
+		if (normalized_value > 0)
+			position_value = sigma_p / normalized_value;
+		else position_value = 0;
+		center += (position_value - positionCenter[center]) / 2000;
+	}
+	i = (i + 1) & 0x07;
 }
 
 void Sensor_Test_Raw() {
 	Sensor_Start();
-	// 센서의 Raw 값을 디스플레이에 출력해 확인하기
-	// --- 코드 작성 ---
+// 센서의 Raw 값을 디스플레이에 출력해 확인하기
+// --- 코드 작성 ---
 	for (;;) {
 		sensor_print16(sensorRaw);
 		if (CUSTOM_SW_BOTH == (sw = Custom_Switch_Read()))
@@ -150,143 +172,133 @@ void Sensor_Calibration() {
 			break;
 	}
 
-	// Calculate ADC coefficients
-	// --- 코드 작성 ---
+// Calculate ADC coefficients
+// --- 코드 작성 ---
 
 	Sensor_Stop();
 }
 
-void position_test(){
+void position_test() {
 	Sensor_Start();
-	while(Custom_Switch_Read() != CUSTOM_SW_BOTH){
+	while (Custom_Switch_Read() != CUSTOM_SW_BOTH) {
 		int32_t sigma_p = 0;
-		normalized_value=0;
-		for(int i = 0; i<16;i++){
-			sigma_p += position[i]*normalized[i];
+		normalized_value = 0;
+		for (int i = 0; i < 16; i++) {
+			sigma_p += position[i] * normalized[i];
 			normalized_value += normalized[i];
 		}
 
-		if(!normalized_value) position_value = 0;
-		else position_value = sigma_p / normalized_value;
+		if (!normalized_value)
+			position_value = 0;
+		else
+			position_value = sigma_p / normalized_value;
 		Custom_OLED_Printf("%6d", position_value);
 	}
 }
 
-void window_position_test(){
+void window_position_test() {
 	Sensor_Start();
-	while(Custom_Switch_Read() != CUSTOM_SW_BOTH){
+	while (Custom_Switch_Read() != CUSTOM_SW_BOTH) {
 		int32_t sigma_p = 0;
-		normalized_value=0;
-		for(int i = 0; i<16;i++){
-			if(Window.CENTER &(1 <<i)){
-				sigma_p += position[i]*normalized[i];
+		normalized_value = 0;
+		for (int i = 0; i < 16; i++) {
+			if (Window.CENTER & (1 << i)) {
+				sigma_p += position[i] * normalized[i];
 				normalized_value += normalized[i];
 			}
 		}
-		if(!normalized_value) position_value = 0;
-		else position_value = sigma_p / normalized_value;
+		if (!normalized_value)
+			position_value = 0;
+		else
+			position_value = sigma_p / normalized_value;
 		Custom_OLED_Printf("%6d", position_value);
 	}
 }
 
-void window_position(int16_t position){
+void window_position(int16_t position) {
 
-	if(!normalized_value) {
+	if (!normalized_value) {
 		Window.CENTER = 0xffff;
 		Window.LEFT = 0;
 		Window.RIGHT = 0;
-	}
-	else if(position <-26000){
+	} else if (position < -26000) {
 		Window.CENTER = 0xf000;
 		Window.LEFT = 0;
-		Window.RIGHT =0x0FFF;
-	}
-	else if(position < -22000){
+		Window.RIGHT = 0x0FFF;
+	} else if (position < -22000) {
 		Window.CENTER = 0xf800;
-		Window.LEFT =0;
+		Window.LEFT = 0;
 		Window.RIGHT = 0x07ff;
-	}
-	else if(position < -18000){
-		Window.CENTER =0xfc00;
+	} else if (position < -18000) {
+		Window.CENTER = 0xfc00;
 		Window.LEFT = 0;
 		Window.RIGHT = 0x3ff;
-	}
-	else if(position < -14000){
+	} else if (position < -14000) {
 		Window.CENTER = 0x7e00;
 		Window.LEFT = 0x8000;
 		Window.RIGHT = 0x01ff;
-	}
-	else if(position < -10000){
-		Window.CENTER=0x3f00;
+	} else if (position < -10000) {
+		Window.CENTER = 0x3f00;
 		Window.LEFT = 0xc00;
 		Window.RIGHT = 0x00ff;
-	}
-	else if(position<-6000){
-		Window.CENTER=0x1f80;
+	} else if (position < -6000) {
+		Window.CENTER = 0x1f80;
 		Window.LEFT = 0xe000;
 		Window.RIGHT = 0x007f;
-	}
-	else if(position<-2000){
-		Window.CENTER=0x0fc0;
+	} else if (position < -2000) {
+		Window.CENTER = 0x0fc0;
 		Window.LEFT = 0xf000;
 		Window.RIGHT = 0x003f;
-	}
-	else if(position > 26000){
+	} else if (position > 26000) {
 		Window.CENTER = 0x000f;
 		Window.LEFT = 0xfff0;
 		Window.RIGHT = 0;
-	}
-	else if(position > 22000){
+	} else if (position > 22000) {
 		Window.CENTER = 0x001f;
 		Window.LEFT = 0xffe0;
 		Window.RIGHT = 0;
 
-	}
-	else if(position > 18000){
+	} else if (position > 18000) {
 		Window.CENTER = 0x003f;
 		Window.LEFT = 0xffc0;
 		Window.RIGHT = 0;
-	}
-	else if(position > 14000){
+	} else if (position > 14000) {
 		Window.CENTER = 0x007e;	//0000000001111110
 		Window.LEFT = 0xff80;
 		Window.RIGHT = 0x0001;
-	}
-	else if(position > 10000){
+	} else if (position > 10000) {
 		Window.CENTER = 0x00fc;	//00000001.1111.1000
 		Window.LEFT = 0xff00;
 		Window.RIGHT = 0x0003;
-	}
-	else if(position > 6000){
+	} else if (position > 6000) {
 		Window.CENTER = 0x01f8;
 		Window.LEFT = 0xfe00;
 		Window.RIGHT = 0x0007;
 
-	}
-	else if(position> 2000){
+	} else if (position > 2000) {
 		Window.CENTER = 0x03f0;
 		Window.LEFT = 0xfc00;
 		Window.RIGHT = 0x000f;
 
-	}
-	else{
+	} else {
 		Window.CENTER = 0x07e0;
 		Window.LEFT = 0xf800;
 		Window.RIGHT = 0x001f;
 	}
 }
 
-void test_window(){
+void test_window() {
 	uint8_t sw;
-	while(CUSTOM_SW_BOTH != (sw = Custom_Switch_Read())){
+	Sensor_Start();
+	while (CUSTOM_SW_BOTH != (sw = Custom_Switch_Read())) {
 		window_position(position_value);
-		if(sw == CUSTOM_SW_1){
+		if (sw == CUSTOM_SW_1) {
 			position_value -= 1000;
-		}
-		else if(sw == CUSTOM_SW_2){
+		} else if (sw == CUSTOM_SW_2) {
 			position_value += 1000;
 		}
-		Custom_OLED_Printf("%4x/1%4x/2%4x", Window.LEFT,Window.CENTER, Window.RIGHT);
+		Custom_OLED_Printf("%4x/1%4x/2%4x", Window.LEFT, Window.CENTER,
+				Window.RIGHT);
 	}
-
+	Sensor_Stop();
 }

@@ -10,6 +10,6 @@
 ../Main/Src/motor.c:48:6:Motor_Start	8	static
 ../Main/Src/motor.c:75:6:Motor_Stop	8	static
 ../Main/Src/motor.c:91:6:Motor_L_TIM3_IRQ	40	static
-../Main/Src/motor.c:122:6:Motor_R_TIM4_IRQ	40	static
-../Main/Src/motor.c:154:6:Motor_Test_Phase	8	static
-../Main/Src/motor.c:166:6:Motor_Test_Velocity	4	static
+../Main/Src/motor.c:124:6:Motor_R_TIM4_IRQ	40	static
+../Main/Src/motor.c:159:6:Motor_Test_Phase	16	static
+../Main/Src/motor.c:184:6:Motor_Test_Velocity	4	static
