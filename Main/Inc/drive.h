@@ -9,6 +9,6 @@ void Drive_First();
 void state_debug();
 void  mark_check();
 
-extern uint16_t positionCenter[15];
+extern int32_t positionCenter[15];
 
 #endif /* INC_DRIVE_H_ */

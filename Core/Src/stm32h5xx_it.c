@@ -251,6 +251,7 @@ void TIM7_IRQHandler(void)
 
   /* USER CODE END TIM7_IRQn 0 */
   /* USER CODE BEGIN TIM7_IRQn 1 */
+	LL_TIM_ClearFlag_UPDATE(TIM7);
 
   /* USER CODE END TIM7_IRQn 1 */
 }

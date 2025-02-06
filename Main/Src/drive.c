@@ -26,7 +26,7 @@
 #define MARK_END 4
 
 uint8_t mark_read[400];
-uint16_t positionCenter[15] = { -28000, -24000, -20000, -16000, -12000, -8000,
+int32_t positionCenter[15] = { -28000, -24000, -20000, -16000, -12000, -8000,
 		-4000, 0, 4000, 8000, 12000, 16000, 20000, 24000, 28000 };
 
 volatile uint16_t sensorState_Sum = 0;
@@ -43,20 +43,25 @@ void Drive_Stop() {
 }
 
 __STATIC_INLINE uint8_t state_machine() {
+
 	uint8_t mark = 0;
 
 	static bool cross_decision = false;
 
 	switch (state) {
 	case STATE_IDLE:
+
 		if ((__builtin_popcount(SensorState & Window.CENTER)) > 4) {
 			state = STATE_CROSS;
-		} else if ((__builtin_popcount(SensorState & (~Window.CENTER)))) {
+		} else if (SensorState & (~Window.CENTER)) {
 			state = STATE_MARK;
-		}
+		} else
+			state = STATE_IDLE;
+		break;
 
 	case STATE_CROSS:
-		if ((!(__builtin_popcount(SensorState & (~Window.CENTER))))
+
+		if ((!(SensorState & ~(Window.CENTER)))
 				&& (sensorState_Sum == 0xffff)) {
 			cross_decision = true;
 			state = STATE_DECISION;
@@ -64,14 +69,17 @@ __STATIC_INLINE uint8_t state_machine() {
 			sensorState_Sum |= SensorState;
 			state = STATE_CROSS;
 		}
+		break;
 	case STATE_MARK:
-		if ((!(__builtin_popcount(SensorState & (~Window.CENTER))))) {
+		if ((!(SensorState & ~(Window.CENTER)))) {
 			state = STATE_DECISION;
 			break;
+		} else {
+			sensorState_Sum |= (SensorState & (~Window.CENTER));
 		}
-		sensorState_Sum |= (sensorState_Sum & (~Window.CENTER));
 		break;
 	case STATE_DECISION:
+
 		if (cross_decision) {
 			mark = MARK_CROSS;
 			cross_decision = false;
@@ -83,10 +91,10 @@ __STATIC_INLINE uint8_t state_machine() {
 		} else if (sensorState_Sum & Window.RIGHT) {
 			mark = MARK_RIGHT;
 		}
-
 		sensorState_Sum = 0;
 		state = STATE_IDLE;
 		return mark;
+
 	}
 	return MARK_NONE;
 
@@ -109,6 +117,7 @@ void Drive_First() {
 	Motor_Start();
 	Drive_Start();
 	while (endmark_cnt < 2) {
+
 		mark = state_machine();
 		if (mark == MARK_END) {
 			endmark_cnt++;
@@ -120,11 +129,11 @@ void Drive_First() {
 		} else if (mark == MARK_RIGHT) {
 			markR_cnt++;
 		}
-		if(!mark){
+		if (!mark) {
 			temp_mark_read[index_mark] = mark;
 			index_mark++;
 		}
-		if (!(SensorState & 0xffff)) {
+		if (!SensorState) {
 			break;
 		}
 	}

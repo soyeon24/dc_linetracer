@@ -600,7 +600,7 @@ static void MX_TIM3_Init(void)
   /* USER CODE END TIM3_Init 1 */
   TIM_InitStruct.Prescaler = 0;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 499;
+  TIM_InitStruct.Autoreload = 4999;
   TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
   LL_TIM_Init(TIM3, &TIM_InitStruct);
   LL_TIM_DisableARRPreload(TIM3);
@@ -669,7 +669,7 @@ static void MX_TIM4_Init(void)
   /* USER CODE END TIM4_Init 1 */
   TIM_InitStruct.Prescaler = 0;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 65535;
+  TIM_InitStruct.Autoreload = 4999;
   TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
   LL_TIM_Init(TIM4, &TIM_InitStruct);
   LL_TIM_DisableARRPreload(TIM4);
@@ -793,7 +793,7 @@ static void MX_TIM6_Init(void)
   /* USER CODE END TIM6_Init 1 */
   TIM_InitStruct.Prescaler = 0;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 49999;
+  TIM_InitStruct.Autoreload = 7999;
   LL_TIM_Init(TIM6, &TIM_InitStruct);
   LL_TIM_DisableARRPreload(TIM6);
   LL_TIM_SetTriggerOutput(TIM6, LL_TIM_TRGO_RESET);
@@ -828,9 +828,9 @@ static void MX_TIM7_Init(void)
   /* USER CODE BEGIN TIM7_Init 1 */
 
   /* USER CODE END TIM7_Init 1 */
-  TIM_InitStruct.Prescaler = 0;
+  TIM_InitStruct.Prescaler = 249;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 65535;
+  TIM_InitStruct.Autoreload = 499;
   LL_TIM_Init(TIM7, &TIM_InitStruct);
   LL_TIM_DisableARRPreload(TIM7);
   LL_TIM_SetTriggerOutput(TIM7, LL_TIM_TRGO_RESET);
