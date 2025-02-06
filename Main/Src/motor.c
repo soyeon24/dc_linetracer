@@ -194,7 +194,7 @@ void Motor_R_TIM4_IRQ() {
 	MotorR.PastEncVal = MotorR.CurrEncVal;
 }
 
-void Motor_gain_p_change() {
+void Motor_velocity_change() {
 	Motor_Start();
 	Sensor_Start();
 	uint8_t sw;

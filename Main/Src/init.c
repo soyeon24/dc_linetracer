@@ -21,13 +21,140 @@
 //	LL_USART_TransmitData8(USART2, (char)ch);
 //	return ch;
 //}
+void threshold_change() {
+	uint8_t sw = 0;
+	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
+		if (sw == CUSTOM_SW_1) {
+			sensorThreshold --;
+		}
+		else if (sw == CUSTOM_SW_2) {
+			sensorThreshold ++;
+		}
+
+		Custom_OLED_Printf("th /1 %d", sensorThreshold);
+	}
+	Custom_OLED_Clear();
+}
+
+void accel_change() {
+	uint8_t sw = 0;
+	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
+
+		if (sw == CUSTOM_SW_1) {
+			accel_setting -= 0.01f;
+		}
+		else if (sw == CUSTOM_SW_2) {
+			accel_setting += 0.01f;
+		}
+		Custom_OLED_Printf("accel/1 %f", accel_setting);
+	}
+	Custom_OLED_Clear();
+}
+void deccel_change() {
+	uint8_t sw = 0;
+	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
+
+		if (sw == CUSTOM_SW_1) {
+			deccel_Setting -= 0.5f;
+		}
+		else if (sw == CUSTOM_SW_2) {
+			deccel_Setting += 0.5f;
+		}
+		Custom_OLED_Printf("deccel/1 %f", deccel_Setting);
+	}
+	Custom_OLED_Clear();
+}
+
+void target_v_change() {
+	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
+
+		if (sw == CUSTOM_SW_1) {
+			target_velocity_setting -= 0.01f;
+		}
+		else if (sw == CUSTOM_SW_2) {
+			target_velocity_setting += 0.01f;
+		}
+		Custom_OLED_Printf("target v/1 %f", target_velocity_setting);
+	}
+	Custom_OLED_Clear();
+}
+void pit_in_change() {
+	uint8_t sw = 0;
+	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
+		if (sw == CUSTOM_SW_1) {
+			pit_in_line -= 0.01;
+		}
+		else if (sw == CUSTOM_SW_2) {
+			pit_in_line += 0.01;
+		}
+
+		Custom_OLED_Printf("pit in line/1 %f", pit_in_line);
+	}
+
+	Custom_OLED_Clear();
+
+}
+void back_to_menu() {
+	uint8_t sw = 0;
+	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
+		Custom_OLED_Printf("yes");
+	}
+}
 
 typedef struct {
+	char name[30];
+	void (*func)();
+} In_Setting;
+
+In_Setting in_setting[] = {
+		{ "/g threshold", threshold_change },
+//		{ "/g pit in", pit_in_change },
+	//	{ "/g save tick", save_tick_change },
+		{ "/g accel", accel_change },
+		{ "/g deccel", deccel_change },
+//		{ "/g pick velocity", pick_velocity_change },
+		{ "/g target velocity", target_v_change },
+//		{ "/g curve deccel", curve_deccel_change },
+//		{ "/g curve rate", curve_rate_change },
+		{ "menu?", back_to_menu }
+
+};
+
+void settings() {
+	uint8_t sw = 0;
+	int8_t count_in_setting = 0;
+	int num_of_setting = sizeof(in_setting) / sizeof(In_Setting);
+
+	Custom_OLED_Clear();
+	for (;;) {
+
+		while (CUSTOM_SW_BOTH != (sw = Custom_Switch_Read())) {
+			if (sw == CUSTOM_SW_1) {
+				count_in_setting--;
+				Custom_OLED_Clear();
+			}
+			else if (sw == CUSTOM_SW_2) {
+				count_in_setting++;
+				Custom_OLED_Clear();
+			}
+			count_in_setting = (count_in_setting + num_of_setting)
+					% num_of_setting;
+			Custom_OLED_Printf(" %s", in_setting[count_in_setting].name);
+		}
+		Custom_OLED_Clear();
+
+		in_setting[count_in_setting].func();
+		if (count_in_setting == (num_of_setting - 1))
+		break;
+
+	}
+}
+/*typedef struct {
 	uint8_t num;
 	int32_t adcCoeffRange[SENSOR_NUM];
 	int32_t adcCoeffBias[SENSOR_NUM];
 	int32_t sensorThreshold;
-} SensorSetting_t;
+} SensorSetting_t;*/
 
 
 typedef struct {
@@ -86,7 +213,8 @@ void check_delay() {
 }
 
 In_Menu in_menu[] = {
-		{"v change", Motor_gain_p_change},
+		{"velocity test",velocity_test },
+		{"v change", Motor_velocity_change},
 		{"motor test", Motor_Test_Phase},
 		{"sensor Raw", Sensor_Test_Raw},
 
@@ -97,7 +225,8 @@ In_Menu in_menu[] = {
 		{"state debug",state_debug},
 		{"sensor state test",sensor_state_test},
 		{"position test", window_position_test},
-		{"/wcheck delay", check_delay}
+		{"/wcheck delay", check_delay},
+		{"settings", settings}
 };
 
 

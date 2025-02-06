@@ -11,6 +11,6 @@ void Motor_L_TIM3_IRQ();
 void Motor_R_TIM4_IRQ();
 void Motor_Test_Velocity();
 void Motor_Test_Phase();
-void Motor_gain_p_change();
+void Motor_velocity_change();
 
 #endif /* INC_MOTOR_H_ */

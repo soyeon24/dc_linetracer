@@ -22,7 +22,7 @@ extern uint8_t blackMax[16];
 extern uint8_t window_start_index;
 extern uint8_t window_end_index;
 extern uint16_t windowCenter[15];
-
+extern uint8_t sensorThreshold;
 
 typedef struct{
 	uint16_t LEFT;

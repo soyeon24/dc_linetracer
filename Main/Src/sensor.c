@@ -276,7 +276,7 @@ void window_position_test() {
 		Custom_OLED_Printf("%6d", position_value);
 	}
 }
-
+/*
 void window_position(int16_t position) {
 	if (position < -26000) {
 		Window.CENTER = 0xf000;
@@ -342,7 +342,7 @@ void window_position(int16_t position) {
 		Window.LEFT = 0xf800;
 		Window.RIGHT = 0x001f;
 	}
-}
+}*/
 
 void test_window() {
 	uint8_t sw;

@@ -32,9 +32,35 @@ int32_t positionCenter[15] = { -28000, -24000, -20000, -16000, -12000, -8000,
 volatile uint16_t sensorState_Sum = 0;
 volatile uint8_t state = STATE_IDLE;
 volatile int index_markcnt = 0;
+
+volatile float current_velocity;
+volatile float target_velocity;
+volatile float target_velocity_setting = 2.f;
+volatile float accel;
+volatile float accel_setting = 4.5f;
+volatile float deccel_Setting = 8.0f;
+volatile float deccel;
+volatile float pit_in_line;
+
+void Drive_TIM7_IRQ() {
+	if (current_velocity < target_velocity) {
+		current_velocity += accel * 0.0005f;
+		if (current_velocity > target_velocity){
+			current_velocity = target_velocity;
+		}
+	}
+	else if (current_velocity >= target_velocity) {
+		current_velocity -= deccel * 0.0005f; //0.0005초마다 불러오는 타이머 이기때문
+		if (current_velocity < target_velocity) {
+			current_velocity = target_velocity;
+		}
+	}
+}
+
 void Drive_Start() {
 	LL_TIM_EnableCounter(TIM7);
 	LL_TIM_EnableIT_UPDATE(TIM7);
+
 }
 
 void Drive_Stop() {
@@ -107,15 +133,23 @@ void Drive_First() {
 	volatile uint8_t markL_cnt = 0;
 	volatile uint8_t markR_cnt = 0;
 	volatile uint8_t mark;
+	current_velocity = 0;
+
+	accel = accel_setting;
+	target_velocity = target_velocity_setting;
+
 	uint32_t index_mark = 0;
+
 	if (whiteMax[1] - blackMax[1] == 0) {
 		while (1) {
 			Custom_OLED_Printf("/r do cali");
 		}
 	}
+
 	Sensor_Start();
 	Motor_Start();
 	Drive_Start();
+
 	while (endmark_cnt < 2) {
 
 		mark = state_machine();
@@ -137,9 +171,17 @@ void Drive_First() {
 			break;
 		}
 	}
+
+	deccel = (current_velocity * current_velocity) / (2 * pit_in_line);
+	target_velocity = 0;
+
+	while (current_velocity > 0)
+		;
+
 	Motor_Stop();
 	Sensor_Stop();
 	Drive_Stop();
+
 	for (int i = 0; i < index_mark; i++) {
 		mark_read[i] = temp_mark_read[i];
 	}
@@ -215,5 +257,25 @@ void mark_check() {
 	Custom_OLED_Clear();
 
 	markcheaki = 0;
+}
+
+void velocity_test() {
+	Custom_OLED_Clear();
+	current_velocity = 0.f;
+	accel = accel_setting;
+	deccel = deccel_Setting;
+	Drive_Start();
+	target_velocity = target_velocity_setting;
+	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
+		Custom_OLED_Printf("/3in ");
+		Custom_OLED_Printf("/4current %f", current_velocity);
+		Custom_OLED_Printf("/5target %f", target_velocity);
+		if (sw == CUSTOM_SW_1) {
+			target_velocity -= 0.1;
+		} else if (sw == CUSTOM_SW_2) {
+			target_velocity += 0.1;
+		}
+	}
+	Drive_Stop();
 }
 

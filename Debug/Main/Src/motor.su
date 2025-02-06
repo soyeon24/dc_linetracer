@@ -12,6 +12,6 @@
 ../Main/Src/motor.c:102:6:Motor_Stop	8	static
 ../Main/Src/motor.c:129:6:Motor_L_TIM3_IRQ	32	static
 ../Main/Src/motor.c:162:6:Motor_R_TIM4_IRQ	32	static
-../Main/Src/motor.c:197:6:Motor_gain_p_change	16	static
+../Main/Src/motor.c:197:6:Motor_velocity_change	16	static
 ../Main/Src/motor.c:222:6:Motor_Test_Phase	16	static
 ../Main/Src/motor.c:249:6:Motor_Test_Velocity	4	static
