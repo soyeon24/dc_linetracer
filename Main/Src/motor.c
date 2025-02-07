@@ -27,24 +27,12 @@ float TIME = 0.00002f;
 #define MOTOR_RES 0.68f//모터래지스터
 #define MOTOR_KE 0.0146f//모터역기전력 토크상수
 
-typedef struct motor {
-	volatile uint32_t CurrEncVal; //현재 엔코더
-	volatile uint32_t PastEncVal; //이전 엔코더
-	volatile int32_t ErrEnc;	// 현재 - 이전 엔코더 == 거리 차이
-	volatile float EncV; //앤코더 변화 속도 (=각속도)
-	volatile float EncD; // 엔코더 변화 거리(=속도의 시간대비 적분값)
-	volatile float ComV; //커맨드 속도 (=목표 속도)
-	volatile float ComD; //커맨드 위치 (=목표 거리)
-	volatile float v; //바퀴속도
-	volatile int32_t Duty;
-
-} motor;
 
 float gain_p = 1024.f;
 float gain_d = 0.f;
 
-struct motor MotorL;
-struct motor MotorR;
+motor MotorL;
+motor MotorR;
 
 void Motor_Start() {
 	MotorL.CurrEncVal = 0; //현재 엔코더
@@ -243,7 +231,6 @@ void Motor_Test_Phase() {
 
 	Motor_Stop();
 	Sensor_Stop();
-
 }
 
 void Motor_Test_Velocity() {

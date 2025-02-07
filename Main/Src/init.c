@@ -36,6 +36,21 @@ void threshold_change() {
 	Custom_OLED_Clear();
 }
 
+void curverate_change() {
+	uint8_t sw = 0;
+	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
+		if (sw == CUSTOM_SW_1) {
+			curve_rate -=0.000001;
+		}
+		else if (sw == CUSTOM_SW_2) {
+			curve_rate +=0.000001;
+		}
+
+		Custom_OLED_Printf("th /1 %d", sensorThreshold);
+	}
+	Custom_OLED_Clear();
+}
+
 void accel_change() {
 	uint8_t sw = 0;
 	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
@@ -61,6 +76,21 @@ void deccel_change() {
 			deccel_Setting += 0.5f;
 		}
 		Custom_OLED_Printf("deccel/1 %f", deccel_Setting);
+	}
+	Custom_OLED_Clear();
+}
+
+void curve_deccel_change() {
+	uint8_t sw = 0;
+	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
+
+		if (sw == CUSTOM_SW_1) {
+			curve_deccel -= 500;
+		}
+		else if (sw == CUSTOM_SW_2) {
+			curve_deccel += 500;
+		}
+		Custom_OLED_Printf("curve deccel/1 %f", curve_deccel);
 	}
 	Custom_OLED_Clear();
 }
@@ -108,14 +138,14 @@ typedef struct {
 
 In_Setting in_setting[] = {
 		{ "/g threshold", threshold_change },
-//		{ "/g pit in", pit_in_change },
+		{ "/g pit in", pit_in_change },
 	//	{ "/g save tick", save_tick_change },
 		{ "/g accel", accel_change },
 		{ "/g deccel", deccel_change },
 //		{ "/g pick velocity", pick_velocity_change },
 		{ "/g target velocity", target_v_change },
-//		{ "/g curve deccel", curve_deccel_change },
-//		{ "/g curve rate", curve_rate_change },
+		{ "/g curve deccel", curve_deccel_change },
+		{ "/g curve rate", curverate_change },
 		{ "menu?", back_to_menu }
 
 };

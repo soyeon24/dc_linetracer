@@ -23,6 +23,7 @@ extern uint8_t window_start_index;
 extern uint8_t window_end_index;
 extern uint16_t windowCenter[15];
 extern uint8_t sensorThreshold;
+extern volatile int32_t position_value;
 
 typedef struct{
 	uint16_t LEFT;

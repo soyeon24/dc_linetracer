@@ -41,6 +41,10 @@ volatile float accel_setting = 4.5f;
 volatile float deccel_Setting = 8.0f;
 volatile float deccel;
 volatile float pit_in_line;
+volatile float curve_rate = 0.000068f;
+
+float curve_deccel = 19000.f;
+
 
 void Drive_TIM7_IRQ() {
 	if (current_velocity < target_velocity) {
@@ -55,6 +59,10 @@ void Drive_TIM7_IRQ() {
 			current_velocity = target_velocity;
 		}
 	}
+	float velocity_center = current_velocity * curve_deccel / (curve_deccel + position_value);
+
+		MotorR.v = velocity_center* (1 - curve_rate * (float) position_value);
+		MotorL.v = velocity_center * (1 + curve_rate * (float) position_value);
 }
 
 void Drive_Start() {

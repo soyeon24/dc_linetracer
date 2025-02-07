@@ -15,6 +15,7 @@ extern volatile float accel_setting;
 extern volatile float deccel_Setting;
 extern volatile float target_velocity_setting;
 extern volatile float pit_in_line;
+extern volatile float curve_rate;
 
 void velocity_test();
 

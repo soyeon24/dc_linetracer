@@ -30,7 +30,7 @@ uint16_t windowCenter[15] = { 0xf000, 0xf800, 0xfc00, 0x7e00, 0x3f00, 0x1f80,
 //		-4000, 0, 4000, 8000, 12000, 16000, 20000, 24000, 28000 };
 
 uint16_t SensorState = 0;
-static volatile int32_t position_value = 0;
+volatile int32_t position_value = 0;
 uint8_t sensorThreshold = 100;
 
 uint8_t window_start_index = 17;
