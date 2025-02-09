@@ -26,6 +26,9 @@
 #define MARK_END 4
 
 uint8_t mark_read[400];
+uint32_t mark_length[400];
+uint8_t index_length = 0;
+
 int32_t positionCenter[15] = { -28000, -24000, -20000, -16000, -12000, -8000,
 		-4000, 0, 4000, 8000, 12000, 16000, 20000, 24000, 28000 };
 
@@ -35,34 +38,34 @@ volatile int index_markcnt = 0;
 
 volatile float current_velocity;
 volatile float target_velocity;
-volatile float target_velocity_setting = 2.f;
+volatile float target_velocity_setting = 1.f;
 volatile float accel;
 volatile float accel_setting = 4.5f;
 volatile float deccel_Setting = 8.0f;
 volatile float deccel;
-volatile float pit_in_line;
+volatile float pit_in_line=0.2f;
 volatile float curve_rate = 0.000068f;
 
-float curve_deccel = 19000.f;
 
+float curve_deccel = 19000.f;
 
 void Drive_TIM7_IRQ() {
 	if (current_velocity < target_velocity) {
 		current_velocity += accel * 0.0005f;
-		if (current_velocity > target_velocity){
+		if (current_velocity > target_velocity) {
 			current_velocity = target_velocity;
 		}
-	}
-	else if (current_velocity >= target_velocity) {
+	} else if (current_velocity >= target_velocity) {
 		current_velocity -= deccel * 0.0005f; //0.0005초마다 불러오는 타이머 이기때문
 		if (current_velocity < target_velocity) {
 			current_velocity = target_velocity;
 		}
 	}
-	float velocity_center = current_velocity * curve_deccel / (curve_deccel + position_value);
+	float velocity_center = current_velocity * curve_deccel
+			/ (curve_deccel + position_value);
 
-		MotorR.v = velocity_center* (1 - curve_rate * (float) position_value);
-		MotorL.v = velocity_center * (1 + curve_rate * (float) position_value);
+	MotorR.v = velocity_center * (1 - curve_rate * (float) position_value);
+	MotorL.v = velocity_center * (1 + curve_rate * (float) position_value);
 }
 
 void Drive_Start() {
@@ -164,8 +167,10 @@ void Drive_First() {
 		if (mark == MARK_END) {
 			endmark_cnt++;
 
+
 		} else if (mark == MARK_CROSS) {
 			cross_cnt++;
+
 		} else if (mark == MARK_LEFT) {
 			markL_cnt++;
 		} else if (mark == MARK_RIGHT) {
@@ -185,7 +190,7 @@ void Drive_First() {
 
 	while (current_velocity > 0)
 		;
-
+Custom_Delay_ms(100);
 	Motor_Stop();
 	Sensor_Stop();
 	Drive_Stop();

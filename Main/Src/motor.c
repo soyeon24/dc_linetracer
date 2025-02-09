@@ -18,7 +18,7 @@
 #define MIN(a, b) ((a > b) ? b : a )
 #define ENCODER_RATIO 2048.f
 #define GEAR (69.f/17.f)
-#define WHEEL 0.03f //3cm라 가정
+#define WHEEL 0.0405f //4cm라 가정
 #define PI M_PI
 #define TICK_PER_METER (GEAR/(WHEEL*PI))
 #define ANGLE_PER_TICK (1/ENCODER_RATIO)
