@@ -14,6 +14,7 @@
 #include "custom_oled.h"
 #include "custom_switch.h"
 
+//input
 #define ABS(x) ((x>0) ? x:(-x))
 #define MIN(a, b) ((a > b) ? b : a )
 #define ENCODER_RATIO 2048.f
@@ -27,7 +28,6 @@ float TIME = 0.00002f;
 #define MOTOR_RES 0.68f//모터래지스터
 #define MOTOR_KE 0.0146f//모터역기전력 토크상수
 
-
 float gain_p = 1024.f;
 float gain_d = 0.f;
 
@@ -35,6 +35,7 @@ motor MotorL;
 motor MotorR;
 
 void Motor_Start() {
+	//state
 	MotorL.CurrEncVal = 0; //현재 엔코더
 	MotorL.PastEncVal = 0; //이전 엔코더
 	MotorL.ErrEnc = 0;	// 현재 - 이전 엔코더 == 거리 차이
@@ -50,6 +51,7 @@ void Motor_Start() {
 	MotorR.EncD = 0; // 엔코더 변화 거리(=속도의 시간대비 적분값)
 	MotorR.ComV = 0; //커맨드 속도 (=목표 속도)
 	MotorR.ComD = 0; //커맨드 위치 (=목표 거리)
+	//input
 	MotorR.v = 0; //바퀴속도
 
 	LL_TIM_EnableCounter(TIM2);

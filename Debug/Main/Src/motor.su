@@ -9,9 +9,9 @@
 ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_gpio.h:894:22:LL_GPIO_SetOutputPin	16	static
 ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_ll_gpio.h:923:22:LL_GPIO_ResetOutputPin	16	static
 ../Main/Src/motor.c:37:6:Motor_Start	8	static
-../Main/Src/motor.c:90:6:Motor_Stop	8	static
-../Main/Src/motor.c:117:6:Motor_L_TIM3_IRQ	32	static
-../Main/Src/motor.c:150:6:Motor_R_TIM4_IRQ	32	static
-../Main/Src/motor.c:185:6:Motor_velocity_change	16	static
-../Main/Src/motor.c:210:6:Motor_Test_Phase	16	static
-../Main/Src/motor.c:236:6:Motor_Test_Velocity	4	static
+../Main/Src/motor.c:92:6:Motor_Stop	8	static
+../Main/Src/motor.c:119:6:Motor_L_TIM3_IRQ	32	static
+../Main/Src/motor.c:152:6:Motor_R_TIM4_IRQ	32	static
+../Main/Src/motor.c:187:6:Motor_velocity_change	16	static
+../Main/Src/motor.c:212:6:Motor_Test_Phase	16	static
+../Main/Src/motor.c:238:6:Motor_Test_Velocity	4	static

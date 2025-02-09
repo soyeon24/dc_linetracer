@@ -96,6 +96,7 @@ void curve_deccel_change() {
 }
 
 void target_v_change() {
+	uint8_t sw = 0;
 	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
 
 		if (sw == CUSTOM_SW_1) {
@@ -130,6 +131,8 @@ void back_to_menu() {
 		Custom_OLED_Printf("yes");
 	}
 }
+
+
 
 typedef struct {
 	char name[30];

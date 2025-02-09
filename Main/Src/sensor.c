@@ -16,28 +16,32 @@
 //#include "custom_filesystem.h"
 //#include "custom_exception.h"
 
-uint8_t sensorRaw[16] = { 0 };
-float_t batteryVolt;
-uint8_t whiteMax[16] = { 0 };
-uint8_t blackMax[16] = { 0 }; //{ 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20 };
-uint8_t normalized[16] = { 0 };
-uint8_t sw;
+//constants
 int32_t position[16] = { -30000, -26000, -22000, -18000, -14000, -10000, -6000,
 		-2000, 2000, 6000, 10000, 14000, 18000, 22000, 26000, 30000 };
 uint16_t windowCenter[15] = { 0xf000, 0xf800, 0xfc00, 0x7e00, 0x3f00, 0x1f80,
 		0x0fc0, 0x07e0, 0x03f0, 0x01f8, 0x00fc, 0x007e, 0x003f, 0x001f, 0x000f };
 //uint32_t positionCenter[15] = { -28000, -24000, -20000, -16000, -12000, -8000,
 //		-4000, 0, 4000, 8000, 12000, 16000, 20000, 24000, 28000 };
-
-uint16_t SensorState = 0;
-volatile int32_t position_value = 0;
 uint8_t sensorThreshold = 100;
 
+//input
+uint8_t sensorRaw[16] = { 0 };
+
+//state
+
+uint8_t whiteMax[16] = { 0 };
+uint8_t blackMax[16] = { 0 };
+uint8_t normalized[16] = { 0 };
+uint16_t SensorState = 0;
+volatile int32_t position_value = 0;
 uint8_t window_start_index = 17;
 uint8_t window_end_index = 0;
-
 window_t Window;
 volatile uint8_t center = 7;
+
+//output
+float_t batteryVolt;
 
 void Sensor_Start() {
 	LL_ADC_Enable(ADC1);
@@ -205,6 +209,7 @@ void Sensor_Test_Raw() {
 	Sensor_Start();
 // 센서의 Raw 값을 디스플레이에 출력해 확인하기
 // --- 코드 작성 ---
+	uint8_t sw;
 	for (;;) {
 		sensor_print16(sensorRaw);
 		if (CUSTOM_SW_BOTH == (sw = Custom_Switch_Read()))

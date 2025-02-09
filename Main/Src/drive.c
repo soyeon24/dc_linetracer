@@ -13,6 +13,7 @@
 //#include "custom_exception.h"
 //#include "custom_filesystem.h"
 
+//constants
 #define STATE_IDLE 0
 #define STATE_CROSS 122
 #define STATE_MARK 2
@@ -25,13 +26,19 @@
 #define MARK_RIGHT 2
 #define MARK_END 4
 
-uint8_t mark_read[400];
-uint32_t mark_length[400];
-uint8_t index_length = 0;
-
 int32_t positionCenter[15] = { -28000, -24000, -20000, -16000, -12000, -8000,
 		-4000, 0, 4000, 8000, 12000, 16000, 20000, 24000, 28000 };
 
+volatile float accel;
+volatile float accel_setting = 4.5f; //생각해보니까 setting 없이 그냥 했으면 되는거였네
+volatile float deccel_Setting = 8.0f;
+volatile float deccel;
+volatile float pit_in_line=0.2f;
+volatile float curve_rate = 0.000068f;
+float curve_deccel = 19000.f;
+
+
+//state
 volatile uint16_t sensorState_Sum = 0;
 volatile uint8_t state = STATE_IDLE;
 volatile int index_markcnt = 0;
@@ -39,15 +46,13 @@ volatile int index_markcnt = 0;
 volatile float current_velocity;
 volatile float target_velocity;
 volatile float target_velocity_setting = 1.f;
-volatile float accel;
-volatile float accel_setting = 4.5f;
-volatile float deccel_Setting = 8.0f;
-volatile float deccel;
-volatile float pit_in_line=0.2f;
-volatile float curve_rate = 0.000068f;
 
 
-float curve_deccel = 19000.f;
+//output
+uint8_t mark_read[400];
+uint32_t mark_length[400];
+uint8_t index_length = 0;
+
 
 void Drive_TIM7_IRQ() {
 	if (current_velocity < target_velocity) {
@@ -138,18 +143,21 @@ __STATIC_INLINE uint8_t state_machine() {
 }
 
 void Drive_First() {
+	//output
 	volatile uint8_t temp_mark_read[400];
 	volatile uint8_t endmark_cnt = 0;
 	volatile uint8_t cross_cnt = 0;
 	volatile uint8_t markL_cnt = 0;
 	volatile uint8_t markR_cnt = 0;
+	uint32_t index_mark = 0;
 	volatile uint8_t mark;
 	current_velocity = 0;
 
+	//input
 	accel = accel_setting;
 	target_velocity = target_velocity_setting;
 
-	uint32_t index_mark = 0;
+
 
 	if (whiteMax[1] - blackMax[1] == 0) {
 		while (1) {
@@ -256,6 +264,7 @@ void state_debug() {
 }
 
 void mark_check() {
+	uint8_t sw = 0;
 	int markcheaki = 0;
 	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
 
@@ -273,6 +282,7 @@ void mark_check() {
 }
 
 void velocity_test() {
+	uint8_t sw = 0;
 	Custom_OLED_Clear();
 	current_velocity = 0.f;
 	accel = accel_setting;

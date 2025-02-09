@@ -6,9 +6,9 @@ C:/stm25/533/External Library/Inc/custom_delay.h:40:22:Custom_Delay_Init_SysTick
 ../Main/Src/init.c:54:6:accel_change	16	static
 ../Main/Src/init.c:68:6:deccel_change	16	static
 ../Main/Src/init.c:83:6:curve_deccel_change	16	static
-../Main/Src/init.c:98:6:target_v_change	8	static
-../Main/Src/init.c:111:6:pit_in_change	16	static
-../Main/Src/init.c:127:6:back_to_menu	16	static
-../Main/Src/init.c:153:6:settings	16	static
-../Main/Src/init.c:239:6:check_delay	8	static
-../Main/Src/init.c:263:6:Init	16	static
+../Main/Src/init.c:98:6:target_v_change	16	static
+../Main/Src/init.c:112:6:pit_in_change	16	static
+../Main/Src/init.c:128:6:back_to_menu	16	static
+../Main/Src/init.c:156:6:settings	16	static
+../Main/Src/init.c:242:6:check_delay	8	static
+../Main/Src/init.c:266:6:Init	16	static
