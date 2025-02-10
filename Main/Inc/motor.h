@@ -29,6 +29,6 @@ typedef struct {
 extern motor MotorL;
 extern motor MotorR;
 
-extern float curve_deccel;
+extern float curve_decel;
 
 #endif /* INC_MOTOR_H_ */

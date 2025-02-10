@@ -31,11 +31,11 @@ int32_t positionCenter[15] = { -28000, -24000, -20000, -16000, -12000, -8000,
 
 volatile float accel;
 volatile float accel_setting = 4.5f; //생각해보니까 setting 없이 그냥 했으면 되는거였네
-volatile float deccel_Setting = 8.0f;
-volatile float deccel;
+volatile float decel_Setting = 8.0f;
+volatile float decel;
 volatile float pit_in_line=0.2f;
 volatile float curve_rate = 0.000068f;
-float curve_deccel = 19000.f;
+float curve_decel = 19000.f;
 
 
 //state
@@ -61,13 +61,13 @@ void Drive_TIM7_IRQ() {
 			current_velocity = target_velocity;
 		}
 	} else if (current_velocity >= target_velocity) {
-		current_velocity -= deccel * 0.0005f; //0.0005초마다 불러오는 타이머 이기때문
+		current_velocity -= decel * 0.0005f; //0.0005초마다 불러오는 타이머 이기때문
 		if (current_velocity < target_velocity) {
 			current_velocity = target_velocity;
 		}
 	}
-	float velocity_center = current_velocity * curve_deccel
-			/ (curve_deccel + position_value);
+	float velocity_center = current_velocity * curve_decel
+			/ (curve_decel + position_value);
 
 	MotorR.v = velocity_center * (1 - curve_rate * (float) position_value);
 	MotorL.v = velocity_center * (1 + curve_rate * (float) position_value);
@@ -156,6 +156,7 @@ void Drive_First() {
 	//input
 	accel = accel_setting;
 	target_velocity = target_velocity_setting;
+	decel = decel_Setting;
 
 
 
@@ -193,7 +194,7 @@ void Drive_First() {
 		}
 	}
 
-	deccel = (current_velocity * current_velocity) / (2 * pit_in_line);
+	decel = (current_velocity * current_velocity) / (2 * pit_in_line);
 	target_velocity = 0;
 
 	while (current_velocity > 0)
@@ -286,7 +287,7 @@ void velocity_test() {
 	Custom_OLED_Clear();
 	current_velocity = 0.f;
 	accel = accel_setting;
-	deccel = deccel_Setting;
+	decel = decel_Setting;
 	Drive_Start();
 	target_velocity = target_velocity_setting;
 	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {

@@ -65,32 +65,32 @@ void accel_change() {
 	}
 	Custom_OLED_Clear();
 }
-void deccel_change() {
+void decel_change() {
 	uint8_t sw = 0;
 	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
 
 		if (sw == CUSTOM_SW_1) {
-			deccel_Setting -= 0.5f;
+			decel_Setting -= 0.5f;
 		}
 		else if (sw == CUSTOM_SW_2) {
-			deccel_Setting += 0.5f;
+			decel_Setting += 0.5f;
 		}
-		Custom_OLED_Printf("deccel/1 %f", deccel_Setting);
+		Custom_OLED_Printf("deccel/1 %f", decel_Setting);
 	}
 	Custom_OLED_Clear();
 }
 
-void curve_deccel_change() {
+void curve_decel_change() {
 	uint8_t sw = 0;
 	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
 
 		if (sw == CUSTOM_SW_1) {
-			curve_deccel -= 500;
+			curve_decel -= 500;
 		}
 		else if (sw == CUSTOM_SW_2) {
-			curve_deccel += 500;
+			curve_decel += 500;
 		}
-		Custom_OLED_Printf("curve deccel/1 %f", curve_deccel);
+		Custom_OLED_Printf("curve decel/1 %f", curve_decel);
 	}
 	Custom_OLED_Clear();
 }
@@ -144,10 +144,10 @@ In_Setting in_setting[] = {
 		{ "/g pit in", pit_in_change },
 	//	{ "/g save tick", save_tick_change },
 		{ "/g accel", accel_change },
-		{ "/g deccel", deccel_change },
+		{ "/g decel", decel_change },
 //		{ "/g pick velocity", pick_velocity_change },
 		{ "/g target velocity", target_v_change },
-		{ "/g curve deccel", curve_deccel_change },
+		{ "/g curve decel", curve_decel_change },
 		{ "/g curve rate", curverate_change },
 		{ "menu?", back_to_menu }
 
