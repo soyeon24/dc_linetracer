@@ -15,9 +15,10 @@
 
 //constants
 #define STATE_IDLE 0
-#define STATE_CROSS 122
+#define STATE_CROSS 1
 #define STATE_MARK 2
 #define STATE_DECISION 3
+#define STATE_CROSS_DECISION 4
 #define ABS(x) ((x>0) ? x:(-x))
 
 #define MARK_NONE 0
@@ -30,16 +31,15 @@ int32_t positionCenter[15] = { -28000, -24000, -20000, -16000, -12000, -8000,
 		-4000, 0, 4000, 8000, 12000, 16000, 20000, 24000, 28000 };
 
 volatile float accel;
-volatile float accel_setting = 4.5f; //생각해보니까 setting 없이 그냥 했으면 되는거였네
+volatile float accel_setting = 4.5f;
 volatile float decel_Setting = 8.0f;
 volatile float decel;
-volatile float pit_in_line=0.2f;
+volatile float pit_in_line = 0.2f;
 volatile float curve_rate = 0.000068f;
 float curve_decel = 19000.f;
 
-
 //state
-volatile uint16_t sensorState_Sum = 0;
+volatile uint32_t sensorStateSum = 0;
 volatile uint8_t state = STATE_IDLE;
 volatile int index_markcnt = 0;
 
@@ -47,12 +47,10 @@ volatile float current_velocity;
 volatile float target_velocity;
 volatile float target_velocity_setting = 1.f;
 
-
 //output
 uint8_t mark_read[400];
 uint32_t mark_length[400];
 uint8_t index_length = 0;
-
 
 void Drive_TIM7_IRQ() {
 	if (current_velocity < target_velocity) {
@@ -61,14 +59,13 @@ void Drive_TIM7_IRQ() {
 			current_velocity = target_velocity;
 		}
 	} else if (current_velocity >= target_velocity) {
-		current_velocity -= decel * 0.0005f; //0.0005초마다 불러오는 타이머 이기때문
+		current_velocity -= decel * 0.0005f; //0.0005초마다 불러오는 타이머이기 때문
 		if (current_velocity < target_velocity) {
 			current_velocity = target_velocity;
 		}
 	}
 	float velocity_center = current_velocity * curve_decel
-			/ (curve_decel + position_value);
-
+			/ (curve_decel + ABS(position_value));
 	MotorR.v = velocity_center * (1 - curve_rate * (float) position_value);
 	MotorL.v = velocity_center * (1 + curve_rate * (float) position_value);
 }
@@ -84,81 +81,84 @@ void Drive_Stop() {
 	LL_TIM_DisableIT_UPDATE(TIM7);
 }
 
-__STATIC_INLINE uint8_t state_machine() {
+__STATIC_INLINE uint32_t Center_State(int32_t position, uint16_t state) {
+	int32_t position_index = (position + 30000 + 2000) / 4000;
+	uint32_t extended_state = (uint32_t) (state);
+	uint32_t centered_state = extended_state << position_index;
+	return centered_state;
+}
 
-	uint8_t mark = 0;
-
-	static bool cross_decision = false;
+__STATIC_INLINE uint8_t State_Machine() {
+	uint16_t windowMask = 0;
+	for (int j = window_start_index; j <= window_end_index; j++) {
+		windowMask |= (1 << (15 - j));
+	}
+	uint16_t markerMask = ~windowMask;
+	bool isMarkerDetected = sensorState & markerMask;
 
 	switch (state) {
 	case STATE_IDLE:
-
-		if ((__builtin_popcount(SensorState & Window.CENTER)) > 4) {
-			state = STATE_CROSS;
-		} else if (SensorState & (~Window.CENTER)) {
+		if (__builtin_popcount(sensorState & windowMask) > 4
+				|| isMarkerDetected) {
+			// 윈도우 내에 4개 이상의 센서에서 라인이 감지되면
+			sensorStateSum = Center_State(position_value, sensorState);
 			state = STATE_MARK;
-		} else
-			state = STATE_IDLE;
-		break;
-
-	case STATE_CROSS:
-
-		if ((!(SensorState & ~(Window.CENTER)))
-				&& (sensorState_Sum == 0xffff)) {
-			cross_decision = true;
-			state = STATE_DECISION;
-		} else {
-			sensorState_Sum |= SensorState;
-			state = STATE_CROSS;
 		}
 		break;
+
 	case STATE_MARK:
-		if ((!(SensorState & ~(Window.CENTER)))) {
+		if (!isMarkerDetected) {
 			state = STATE_DECISION;
 			break;
-		} else {
-			sensorState_Sum |= (SensorState & (~Window.CENTER));
 		}
+
+		sensorStateSum |= Center_State(position_value, sensorState);
 		break;
+
 	case STATE_DECISION:
-
-		if (cross_decision) {
-			mark = MARK_CROSS;
-			cross_decision = false;
-		} else if ((sensorState_Sum & Window.LEFT)
-				&& (sensorState_Sum & Window.RIGHT)) {
-			mark = MARK_END;
-		} else if (sensorState_Sum & Window.LEFT) {
-			mark = MARK_LEFT;
-		} else if (sensorState_Sum & Window.RIGHT) {
-			mark = MARK_RIGHT;
-		}
-		sensorState_Sum = 0;
 		state = STATE_IDLE;
-		return mark;
 
+		uint32_t MASK_LEFT = ((uint32_t) 0xFFFFFFFF) << 19;
+		uint32_t MASK_RIGHT = ((uint32_t) 0xFFFFFFFF) >> 20;
+
+		bool isLeftDetected = sensorStateSum & MASK_LEFT;
+		bool isRightDetected = sensorStateSum & MASK_RIGHT;
+		bool isSensorStateFull = (sensorStateSum & 0x007FFF00) == 0x007FFF00;
+
+		if (isSensorStateFull) {
+			return MARK_CROSS;
+		}
+
+		if (isLeftDetected && isRightDetected) {
+			return MARK_END;
+		}
+
+		if (isLeftDetected) {
+			return MARK_LEFT;
+		}
+
+		if (isRightDetected) {
+			return MARK_RIGHT;
+		}
 	}
 	return MARK_NONE;
-
 }
 
 void Drive_First() {
-	//output
-	volatile uint8_t temp_mark_read[400];
-	volatile uint8_t endmark_cnt = 0;
-	volatile uint8_t cross_cnt = 0;
-	volatile uint8_t markL_cnt = 0;
-	volatile uint8_t markR_cnt = 0;
+//output
+	uint8_t temp_mark_read[400];
+	uint8_t endmark_cnt = 0;
+	uint8_t cross_cnt = 0;
+	uint8_t markL_cnt = 0;
+	uint8_t markR_cnt = 0;
 	uint32_t index_mark = 0;
-	volatile uint8_t mark;
+	uint8_t mark;
 	current_velocity = 0;
 
-	//input
+//input
 	accel = accel_setting;
 	target_velocity = target_velocity_setting;
 	decel = decel_Setting;
-
-
 
 	if (whiteMax[1] - blackMax[1] == 0) {
 		while (1) {
@@ -171,25 +171,23 @@ void Drive_First() {
 	Drive_Start();
 
 	while (endmark_cnt < 2) {
-
-		mark = state_machine();
+		mark = State_Machine();
 		if (mark == MARK_END) {
 			endmark_cnt++;
-
-
 		} else if (mark == MARK_CROSS) {
 			cross_cnt++;
-
 		} else if (mark == MARK_LEFT) {
 			markL_cnt++;
 		} else if (mark == MARK_RIGHT) {
 			markR_cnt++;
 		}
-		if (!mark) {
+
+		if (mark) {
 			temp_mark_read[index_mark] = mark;
 			index_mark++;
 		}
-		if (!SensorState) {
+
+		if (!sensorState) {
 			break;
 		}
 	}
@@ -199,7 +197,7 @@ void Drive_First() {
 
 	while (current_velocity > 0)
 		;
-Custom_Delay_ms(100);
+	Custom_Delay_ms(100);
 	Motor_Stop();
 	Sensor_Stop();
 	Drive_Stop();
@@ -243,7 +241,7 @@ void state_debug() {
 	int prev_mark = 0;
 
 	while (Custom_Switch_Read() != CUSTOM_SW_BOTH) {
-		mark = state_machine();
+		mark = State_Machine();
 		if (mark == 1)
 			Custom_OLED_Printf("left  ");
 		else if (mark == 2)

@@ -60,6 +60,7 @@ static void MX_ADC1_Init(void);
 static void MX_ADC2_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_ICACHE_Init(void);
+static void MX_FLASH_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -83,12 +84,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-
-  /* System interrupt init*/
-  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
-
-  /* SysTick_IRQn interrupt configuration */
-  NVIC_SetPriority(SysTick_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),15, 0));
+  HAL_Init();
 
   /** Disable the internal Pull-Up in Dead Battery pins of UCPD peripheral
   */
@@ -118,6 +114,7 @@ int main(void)
   MX_ADC2_Init();
   MX_SPI2_Init();
   MX_ICACHE_Init();
+  MX_FLASH_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -192,10 +189,13 @@ void SystemClock_Config(void)
   LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
   LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
   LL_RCC_SetAPB3Prescaler(LL_RCC_APB3_DIV_1);
-
-  LL_Init1msTick(250000000);
-
   LL_SetSystemCoreClock(250000000);
+
+   /* Update the time base */
+  if (HAL_InitTick (TICK_INT_PRIORITY) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
 /**
@@ -382,6 +382,35 @@ static void MX_ADC2_Init(void)
   /* USER CODE BEGIN ADC2_Init 2 */
 
   /* USER CODE END ADC2_Init 2 */
+
+}
+
+/**
+  * @brief FLASH Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_FLASH_Init(void)
+{
+
+  /* USER CODE BEGIN FLASH_Init 0 */
+
+  /* USER CODE END FLASH_Init 0 */
+
+  /* USER CODE BEGIN FLASH_Init 1 */
+
+  /* USER CODE END FLASH_Init 1 */
+  if (HAL_FLASH_Unlock() != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_FLASH_Lock() != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN FLASH_Init 2 */
+
+  /* USER CODE END FLASH_Init 2 */
 
 }
 

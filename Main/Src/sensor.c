@@ -17,13 +17,17 @@
 //#include "custom_exception.h"
 
 //constants
-int32_t position[16] = { -30000, -26000, -22000, -18000, -14000, -10000, -6000,
-		-2000, 2000, 6000, 10000, 14000, 18000, 22000, 26000, 30000 };
-uint16_t windowCenter[15] = { 0xf000, 0xf800, 0xfc00, 0x7e00, 0x3f00, 0x1f80,
-		0x0fc0, 0x07e0, 0x03f0, 0x01f8, 0x00fc, 0x007e, 0x003f, 0x001f, 0x000f };
-//uint32_t positionCenter[15] = { -28000, -24000, -20000, -16000, -12000, -8000,
-//		-4000, 0, 4000, 8000, 12000, 16000, 20000, 24000, 28000 };
+int32_t sensor_positions[16] = {
+// Left
+		-30000, -26000, -22000, -18000, -14000, -10000, -6000, -2000,
+// Right
+		2000, 6000, 10000, 14000, 18000, 22000, 26000, 30000
+//
+		};
 uint8_t sensorThreshold = 100;
+
+// 배열 인덱스 순서는 라인트레이서를 위쪽에서 봤을 때 왼쪽이 0번, 오른쪽이 15번
+// 비트 인덱스 순서는 동일한 조건에서 왼쪽이 MSB(&1<<15), 오른쪽이 LSB(&1<<<0)
 
 //input
 uint8_t sensorRaw[16] = { 0 };
@@ -32,8 +36,8 @@ uint8_t sensorRaw[16] = { 0 };
 
 uint8_t whiteMax[16] = { 0 };
 uint8_t blackMax[16] = { 0 };
-uint8_t normalized[16] = { 0 };
-uint16_t SensorState = 0;
+volatile uint8_t normalized[16] = { 0 };
+volatile uint16_t sensorState = 0;
 volatile int32_t position_value = 0;
 uint8_t window_start_index = 17;
 uint8_t window_end_index = 0;
@@ -94,7 +98,8 @@ __STATIC_INLINE uint16_t Battery_ADC_Read() {
 }
 
 void Sensor_TIM6_IRQ() {
-	static uint32_t i = 0;
+	static uint8_t i = 0;
+
 	GPIOC->ODR = (GPIOC->ODR & (~0x07)) + i;
 	GPIOC->ODR |= 0x08;
 	Sensor_ADC_Read();
@@ -104,6 +109,8 @@ void Sensor_TIM6_IRQ() {
 	sensorRaw[i] = rawL;
 	sensorRaw[i + 8] = rawR;
 
+	// TODO: 가끔씩읽으세요 이런 안중요한건 어차피 배터리 측정쪽에 로우패스필터있어서 빨리읽어도 소용x
+	// 그리고 인터럽트 핸들러에서 일 많이하면 안돼(무척중요)
 	batteryVolt = Battery_ADC_Read() * 21 * 3.3 / 4095;
 
 	if (rawL < blackMax[i])
@@ -113,6 +120,7 @@ void Sensor_TIM6_IRQ() {
 	else
 		normalized[i] = 255 * (rawL - blackMax[i])
 				/ (whiteMax[i] - blackMax[i]);
+
 	if (rawR < blackMax[i + 8])
 		normalized[i + 8] = 0;
 	else if (rawR > whiteMax[i + 8])
@@ -121,9 +129,9 @@ void Sensor_TIM6_IRQ() {
 		normalized[i + 8] = 255 * (rawR - blackMax[i + 8])
 				/ (whiteMax[i + 8] - blackMax[i + 8]);
 
-	SensorState = (SensorState & ~(0x101 << i))
-			| ((normalized[i] > sensorThreshold) << (i))
-			| ((normalized[i + 8] > sensorThreshold) << (i + 8));
+	sensorState = (sensorState & ~(0x101 << (7 - i)))
+			| ((normalized[i + 8] > sensorThreshold) << (7 - i))
+			| ((normalized[i] > sensorThreshold) << (15 - i));
 
 	int32_t weighted_sum = 0;
 	int32_t normalized_value = 0;
@@ -151,59 +159,28 @@ void Sensor_TIM6_IRQ() {
 			current_window_end_index = sensor_index;
 		}
 
-		weighted_sum += position[sensor_index] * normalized[sensor_index];
+		weighted_sum += sensor_positions[sensor_index]
+				* normalized[sensor_index];
 		normalized_value += normalized[sensor_index];
 	}
 
 	position_value = weighted_sum / normalized_value;
 	window_start_index = current_window_start_index;
 	window_end_index = current_window_end_index;
-	Window.CENTER = 0;
-	Window.LEFT = 0;
-	Window.RIGHT = 0;
-	for (int j = window_start_index; j <= window_end_index; j++){
-		Window.CENTER |= (1 << (15 - j));
+
+	Window.center = 0;
+	Window.left = 0;
+	Window.right = 0;
+
+	// Bit mask 인덱스 계산 조심할 것!
+	for (int j = window_start_index; j <= window_end_index; j++) {
+		Window.center |= (1 << (15 - j));
 	}
-	Window.LEFT = (0xffff<<(15-window_start_index));
-	Window.RIGHT = (0xffff>>window_end_index);
+	Window.left = ((uint16_t) (0xffff)) << (16 - window_start_index);
+	Window.right = ((uint16_t) (0xffff)) >> (window_end_index + 1);
 
-	/*
-	 uint8_t windowC_start = 0;
-	 uint8_t count = 0;
-	 if (i == 0x07) {
-	 int32_t sigma_p = 0;
-	 int32_t normalized_value = 0;
-	 for (int j = 15; j >= 0; j--) {
-	 if (j < (position_value / 4000 + 4.5))
-	 continue;
-	 else if (j > (position_value / 4000 + 10.5))
-	 continue;
-
-	 sigma_p += position[j] * normalized[j];
-	 normalized_value += normalized[j];
-	 windowC_start = j;
-	 count++;
-
-	 }
-	 }*/
 	i = (i + 1) & 0x07;
-
 }
-/*
- void Calc_Position() {
- center += (position_value - positionCenter[center]) / 2000;
- Window.CENTER = windowCenter[center];
- int32_t sigma_p = 0;
- int32_t normalized_value = 0;
- for (uint8_t k = MAX(0, center - 2); k < MIN(16, center + 4); k++) {
- sigma_p += position[k] * normalized[k];
- normalized_value += normalized[k];
- }
- if (!normalized_value)
- position_value = 0;
- else
- position_value = sigma_p / normalized_value;
- }*/
 
 void Sensor_Test_Raw() {
 	Sensor_Start();
@@ -263,7 +240,7 @@ void position_test() {
 		int32_t sigma_p = 0;
 		int32_t normalized_value = 0;
 		for (int i = 0; i < 16; i++) {
-			sigma_p += position[i] * normalized[i];
+			sigma_p += sensor_positions[i] * normalized[i];
 			normalized_value += normalized[i];
 		}
 
@@ -281,80 +258,13 @@ void window_position_test() {
 		Custom_OLED_Printf("%6d", position_value);
 	}
 }
-/*
-void window_position(int16_t position) {
-	if (position < -26000) {
-		Window.CENTER = 0xf000;
-		Window.LEFT = 0;
-		Window.RIGHT = 0x0FFF;
-	} else if (position < -22000) {
-		Window.CENTER = 0xf800;
-		Window.LEFT = 0;
-		Window.RIGHT = 0x07ff;
-	} else if (position < -18000) {
-		Window.CENTER = 0xfc00;
-		Window.LEFT = 0;
-		Window.RIGHT = 0x3ff;
-	} else if (position < -14000) {
-		Window.CENTER = 0x7e00;
-		Window.LEFT = 0x8000;
-		Window.RIGHT = 0x01ff;
-	} else if (position < -10000) {
-		Window.CENTER = 0x3f00;
-		Window.LEFT = 0xc00;
-		Window.RIGHT = 0x00ff;
-	} else if (position < -6000) {
-		Window.CENTER = 0x1f80;
-		Window.LEFT = 0xe000;
-		Window.RIGHT = 0x007f;
-	} else if (position < -2000) {
-		Window.CENTER = 0x0fc0;
-		Window.LEFT = 0xf000;
-		Window.RIGHT = 0x003f;
-	} else if (position > 26000) {
-		Window.CENTER = 0x000f;
-		Window.LEFT = 0xfff0;
-		Window.RIGHT = 0;
-	} else if (position > 22000) {
-		Window.CENTER = 0x001f;
-		Window.LEFT = 0xffe0;
-		Window.RIGHT = 0;
-
-	} else if (position > 18000) {
-		Window.CENTER = 0x003f;
-		Window.LEFT = 0xffc0;
-		Window.RIGHT = 0;
-	} else if (position > 14000) {
-		Window.CENTER = 0x007e;	//0000000001111110
-		Window.LEFT = 0xff80;
-		Window.RIGHT = 0x0001;
-	} else if (position > 10000) {
-		Window.CENTER = 0x00fc;	//00000001.1111.1000
-		Window.LEFT = 0xff00;
-		Window.RIGHT = 0x0003;
-	} else if (position > 6000) {
-		Window.CENTER = 0x01f8;
-		Window.LEFT = 0xfe00;
-		Window.RIGHT = 0x0007;
-
-	} else if (position > 2000) {
-		Window.CENTER = 0x03f0;
-		Window.LEFT = 0xfc00;
-		Window.RIGHT = 0x000f;
-
-	} else {
-		Window.CENTER = 0x07e0;
-		Window.LEFT = 0xf800;
-		Window.RIGHT = 0x001f;
-	}
-}*/
 
 void test_window() {
 	uint8_t sw;
 	Sensor_Start();
 	while (CUSTOM_SW_BOTH != (sw = Custom_Switch_Read())) {
-		Custom_OLED_Printf("%4x/1%4x/2%4x", Window.LEFT, Window.CENTER,
-				Window.RIGHT);
+		Custom_OLED_Printf("%4x/1%4x/2%4x", Window.left, Window.center,
+				Window.right);
 	}
 	Sensor_Stop();
 }
@@ -363,7 +273,11 @@ void sensor_state_test() {
 	uint8_t sw;
 	Sensor_Start();
 	while (CUSTOM_SW_BOTH != (sw = Custom_Switch_Read())) {
-		Custom_OLED_Printf("%6d", SensorState);
+		char stateString[17] = { 0 };
+		for (int i = 0; i < 16; i++) {
+			stateString[15 - i] = '0' + !!(sensorState & (1 << i));
+		}
+		Custom_OLED_Printf("%s", stateString);
 	}
 	Sensor_Stop();
 }

@@ -16,7 +16,7 @@ void Calc_Position();
 
 extern float_t batteryVolt;
 //extern volatile int16_t position_value;
-extern uint16_t SensorState;
+extern volatile uint16_t sensorState;
 extern uint8_t whiteMax[16];
 extern uint8_t blackMax[16];
 extern uint8_t window_start_index;
@@ -26,9 +26,9 @@ extern uint8_t sensorThreshold;
 extern volatile int32_t position_value;
 
 typedef struct{
-	uint16_t LEFT;
-	uint16_t CENTER;
-	uint16_t RIGHT;
+	uint16_t left;
+	uint16_t center;
+	uint16_t right;
 }window_t;
 
 extern window_t Window;

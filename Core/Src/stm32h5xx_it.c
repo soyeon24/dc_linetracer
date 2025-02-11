@@ -28,7 +28,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
-uint32_t uwTick = 0;
+
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -187,7 +187,7 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
   /* USER CODE END SysTick_IRQn 0 */
-
+  HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
 uwTick++;
   /* USER CODE END SysTick_IRQn 1 */

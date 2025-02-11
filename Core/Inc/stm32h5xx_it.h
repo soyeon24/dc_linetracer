@@ -27,7 +27,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-extern uint32_t uwTick;
 
 /* USER CODE END Includes */
 
