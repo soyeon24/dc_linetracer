@@ -103,6 +103,7 @@ void target_v_change() {
 	}
 	Custom_OLED_Clear();
 }
+
 void pit_in_change() {
 	uint8_t sw = 0;
 	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
@@ -185,6 +186,41 @@ uint8_t count = 0;
 
 #define FLASH_ADDR  0x08040000
 
+//===
+
+// MAX_FLASH_SIZE_BYTES must be multiple of 16
+#define MAX_FLASH_SIZE_BYTES 128
+
+typedef struct {
+	uint8_t whitemax[16];
+	uint8_t blackmax[16];
+} SaveData_t;
+
+typedef union {
+	SaveData_t saveData;
+	uint8_t array[MAX_FLASH_SIZE_BYTES];
+} SaveData_u;
+
+void example() {
+	SaveData_u myUnion = { 0 };
+	SaveData_t *myData = &myUnion.saveData;
+
+	myData->blackmax[0] = 123;
+	myData->whitemax[0] = 234;
+
+	for (int i = 0; i < MAX_FLASH_SIZE_BYTES; i += 16) {
+		// 이 함수는 세 번째 인자가 16byte 길이의 배열이라고 가정한다.
+		// 그래서 그 배열을 두 번째 인자로 주어진 주소에 쓴다.
+		HAL_FLASH_Program(
+		FLASH_TYPEPROGRAM_QUADWORD, //STM32에서 word size=32bit. 그러므로 quadword = 128bit = 16bytes
+				FLASH_ADDR + i, // 데이터를 쓸 위치
+				(uint32_t) (&(myUnion.array[i])) // 16bytes 배열의 첫번째 원소를 가리키는 포인터(를 uint32_t로 캐스팅한 것)
+				);
+	}
+}
+
+//===
+
 static void Flash_Save() {
 	uint32_t data[4] = { 0 };
 
@@ -244,8 +280,44 @@ void check_delay() {
 	Custom_OLED_Clear();
 }
 
+void target_v_0_5() {
+	uint8_t sw = 0;
+	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
+
+		if (sw == CUSTOM_SW_2) {
+			target_velocity_setting = 0.5f;
+		} else if (sw == CUSTOM_SW_1) {
+			break;
+		}
+		Custom_OLED_Printf("target v/1 %f /2to 0.5 yes",
+				target_velocity_setting);
+	}
+	Custom_OLED_Clear();
+}
+
+void target_v_1() {
+	uint8_t sw = 0;
+	while ((sw = Custom_Switch_Read()) != CUSTOM_SW_BOTH) {
+
+		if (sw == CUSTOM_SW_2) {
+			target_velocity_setting = 1.0f;
+		} else if (sw == CUSTOM_SW_1) {
+			break;
+		}
+		Custom_OLED_Printf("target v/1 %f /2to 1.0 yes",
+				target_velocity_setting);
+	}
+	Custom_OLED_Clear();
+}
+
 In_Menu in_menu[] = { //
-		//
+				//
+				{ "/b tv 0.5", target_v_0_5 }, //
+				{ "/g calibration", Sensor_Calibration }, //
+				{ "/m first drive", Drive_First }, //
+
+				{ "/l tv 1.0", target_v_1 },
+				{ "/y tv setting", target_v_change }, //
 				{ "Flash save", Flash_Save },		//
 				{ "Flash load", Flash_Load },		//
 				{ "velocity test", velocity_test }, //
@@ -253,8 +325,7 @@ In_Menu in_menu[] = { //
 				{ "motor test", Motor_Test_Phase }, //
 				{ "sensor Raw", Sensor_Test_Raw }, //
 				//
-				{ "calibration", Sensor_Calibration }, //
-				{ "first drive", Drive_First }, //
+
 				{ "window test", test_window }, //
 				{ "mark check", mark_check }, //
 				{ "state debug", state_debug }, //
