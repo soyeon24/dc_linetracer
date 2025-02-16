@@ -12,7 +12,7 @@ void Sensor_Calibration();
 void sensor_state_test();
 void window_position_test();
 void Calc_Position();
-
+void sensor_print16();
 
 extern float_t batteryVolt;
 //extern volatile int16_t position_value;

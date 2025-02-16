@@ -201,24 +201,97 @@ typedef union {
 	uint8_t array[MAX_FLASH_SIZE_BYTES];
 } SaveData_u;
 
-void example() {
-	SaveData_u myUnion = { 0 };
-	SaveData_t *myData = &myUnion.saveData;
+void Cali_Flash_save() {
+	uint8_t sw = 0;
 
-	myData->blackmax[0] = 123;
-	myData->whitemax[0] = 234;
+	while (CUSTOM_SW_BOTH != (sw = Custom_Switch_Read())) {
+		Custom_OLED_Printf(
+				"wanna save flash/2no:l yes:R /3/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/4/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x /5/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/6/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x",
+				whiteMax[0], whiteMax[1], whiteMax[2], whiteMax[3], whiteMax[4],
+				whiteMax[5], whiteMax[6], whiteMax[7], whiteMax[8], whiteMax[9],
+				whiteMax[10], whiteMax[11], whiteMax[12], whiteMax[13],
+				whiteMax[14], whiteMax[15], blackMax[0], blackMax[1],
+				blackMax[2], blackMax[3], blackMax[4], blackMax[5], blackMax[6],
+				blackMax[7], blackMax[8], blackMax[9], blackMax[10],
+				blackMax[11], blackMax[12], blackMax[13], blackMax[14],
+				blackMax[15], blackMax[16]);
+		if (sw == CUSTOM_SW_1) {
+			break;
+		}
+		if (sw == CUSTOM_SW_2) {
+			Custom_OLED_Clear();
+			HAL_FLASH_Unlock();
 
-	for (int i = 0; i < MAX_FLASH_SIZE_BYTES; i += 16) {
-		// 이 함수는 세 번째 인자가 16byte 길이의 배열이라고 가정한다.
-		// 그래서 그 배열을 두 번째 인자로 주어진 주소에 쓴다.
-		HAL_FLASH_Program(
-		FLASH_TYPEPROGRAM_QUADWORD, //STM32에서 word size=32bit. 그러므로 quadword = 128bit = 16bytes
-				FLASH_ADDR + i, // 데이터를 쓸 위치
-				(uint32_t) (&(myUnion.array[i])) // 16bytes 배열의 첫번째 원소를 가리키는 포인터(를 uint32_t로 캐스팅한 것)
-				);
+			FLASH_EraseInitTypeDef erase;
+			erase.Banks = FLASH_BANK_2;
+			erase.TypeErase = FLASH_TYPEERASE_MASSERASE;
+
+			uint32_t err;
+			if (HAL_FLASHEx_Erase(&erase, &err) != HAL_OK) {
+				Custom_OLED_Printf("Write Fail");
+				while (1)
+					;
+			}
+			SaveData_u myUnion = { 0 };
+			SaveData_t *myData = &myUnion.saveData;
+
+			for (int i = 0; i < 16; i++) {
+				myData->whitemax[i] = whiteMax[i];
+				myData->blackmax[i] = blackMax[i];
+			}
+
+			for (int i = 0; i < MAX_FLASH_SIZE_BYTES; i += 16) {
+				// 이 함수는 세 번째 인자가 16byte 길이의 배열이라고 가정한다.
+				// 그래서 그 배열을 두 번째 인자로 주어진 주소에 쓴다.
+				HAL_FLASH_Program(
+				FLASH_TYPEPROGRAM_QUADWORD, //STM32에서 word size=32bit. 그러므로 quadword = 128bit = 16bytes
+						FLASH_ADDR + i, // 데이터를 쓸 위치
+						(uint32_t) (&(myUnion.array[i])) // 16bytes 배열의 첫번째 원소를 가리키는 포인터(를 uint32_t로 캐스팅한 것)
+						);
+			}
+		}
 	}
+
 }
 
+void Use_Saved_cali() {
+	uint8_t sw = 0;
+	while (CUSTOM_SW_BOTH != (sw = Custom_Switch_Read())) {
+
+		Custom_OLED_Printf(
+				"load cali/2no:l yes:R /3/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/4/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x /5/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/6/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x",
+				*((uint8_t*) FLASH_ADDR), *((uint8_t*) FLASH_ADDR + 1),
+				*((uint8_t*) FLASH_ADDR + 2), *((uint8_t*) FLASH_ADDR + 3),
+				*((uint8_t*) FLASH_ADDR + 4), *((uint8_t*) FLASH_ADDR + 5),
+				*((uint8_t*) FLASH_ADDR + 6), *((uint8_t*) FLASH_ADDR + 7),
+				*((uint8_t*) FLASH_ADDR + 8), *((uint8_t*) FLASH_ADDR + 9),
+				*((uint8_t*) FLASH_ADDR + 10), *((uint8_t*) FLASH_ADDR + 11),
+				*((uint8_t*) FLASH_ADDR + 12), *((uint8_t*) FLASH_ADDR + 13),
+				*((uint8_t*) FLASH_ADDR + 14), *((uint8_t*) FLASH_ADDR + 15),
+				*((uint8_t*) FLASH_ADDR + 16), *((uint8_t*) FLASH_ADDR + 17),
+				*((uint8_t*) FLASH_ADDR + 18), *((uint8_t*) FLASH_ADDR + 19),
+				*((uint8_t*) FLASH_ADDR + 20), *((uint8_t*) FLASH_ADDR + 21),
+				*((uint8_t*) FLASH_ADDR + 22), *((uint8_t*) FLASH_ADDR + 23),
+				*((uint8_t*) FLASH_ADDR + 24), *((uint8_t*) FLASH_ADDR + 25),
+				*((uint8_t*) FLASH_ADDR + 26), *((uint8_t*) FLASH_ADDR + 27),
+				*((uint8_t*) FLASH_ADDR + 28), *((uint8_t*) FLASH_ADDR + 29),
+				*((uint8_t*) FLASH_ADDR + 30), *((uint8_t*) FLASH_ADDR + 31));
+		if (sw == CUSTOM_SW_1) {
+			break;
+		}
+		if (sw == CUSTOM_SW_2) {
+			Custom_OLED_Clear();
+			for (int i = 0; i < 16; i++) {
+				whiteMax[i] = *(uint8_t*) (FLASH_ADDR + i);
+			}
+			for (int i = 0; i < 16; i++) {
+				blackMax[i] = *(uint8_t*) (FLASH_ADDR + i + 16);
+			}
+
+		}
+	}
+
+}
 //===
 
 static void Flash_Save() {
@@ -312,6 +385,9 @@ void target_v_1() {
 
 In_Menu in_menu[] = { //
 				//
+				{ "/g calibration", Sensor_Calibration }, //
+				{ "/g Cali Flash save", Cali_Flash_save }, //
+				{ "/g load Saved cali", Use_Saved_cali }, //
 				{ "/b tv 0.5", target_v_0_5 }, //
 				{ "/g calibration", Sensor_Calibration }, //
 				{ "/m first drive", Drive_First }, //
