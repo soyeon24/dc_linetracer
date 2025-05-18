@@ -11,7 +11,7 @@ C:/stm25/533/External Library/Inc/custom_delay.h:40:22:Custom_Delay_Init_SysTick
 ../Main/Src/init.c:122:6:back_to_menu	16	static
 ../Main/Src/init.c:145:6:settings	16	static
 ../Main/Src/init.c:204:6:Cali_Flash_save	408	static
-../Main/Src/init.c:257:6:Use_Saved_cali	248	static
+../Main/Src/init.c:257:6:Load_Saved_cali	248	static
 ../Main/Src/init.c:297:13:Flash_Save	48	static
 ../Main/Src/init.c:344:13:Flash_Load	8	static
 ../Main/Src/init.c:350:6:check_delay	8	static

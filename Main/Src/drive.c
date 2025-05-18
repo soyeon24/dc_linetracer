@@ -83,6 +83,7 @@ void Drive_Stop() {
 
 __STATIC_INLINE uint32_t Center_State(int32_t position, uint16_t state) {
 	int32_t position_index = (position + 30000 + 2000) / 4000;
+	//포지션 값은 -30000~30000인데 인덱스는 0부터 2000을 더해준 이유는 포지션 중 스케일 4000 중 0~2000은 왼쪽 센서를 2001~4000은 오른쪽으로
 	uint32_t extended_state = (uint32_t) (state);
 	uint32_t centered_state = extended_state << position_index;
 	return centered_state;
@@ -100,7 +101,7 @@ __STATIC_INLINE uint8_t State_Machine() {
 	case STATE_IDLE:
 		if (__builtin_popcount(sensorState & windowMask) > 4
 				|| isMarkerDetected) {
-			// 윈도우 내에 4개 이상의 센서에서 라인이 감지되면
+			// 윈도우 내에 4개 이상의 센서에서 라인이 감지되면 또는 마커에 하나라도 감지가 된다면
 			sensorStateSum = Center_State(position_value, sensorState);
 			state = STATE_MARK;
 		}

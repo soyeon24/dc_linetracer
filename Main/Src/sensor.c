@@ -111,7 +111,7 @@ void Sensor_TIM6_IRQ() {
 
 	// TODO: 가끔씩읽으세요 이런 안중요한건 어차피 배터리 측정쪽에 로우패스필터있어서 빨리읽어도 소용x
 	// 그리고 인터럽트 핸들러에서 일 많이하면 안돼(무척중요)
-	batteryVolt = Battery_ADC_Read() * 21 * 3.3 / 4095;
+	batteryVolt = Battery_ADC_Read() * 21 * 3.3 / 4095; //전압분배 해서 21베 하고 4095가 3.3V스케일로 바꾸는 것
 
 	if (rawL < blackMax[i])
 		normalized[i] = 0;
@@ -129,15 +129,15 @@ void Sensor_TIM6_IRQ() {
 		normalized[i + 8] = 255 * (rawR - blackMax[i + 8])
 				/ (whiteMax[i + 8] - blackMax[i + 8]);
 
-	sensorState = (sensorState & ~(0x101 << (7 - i)))
-			| ((normalized[i + 8] > sensorThreshold) << (7 - i))
-			| ((normalized[i] > sensorThreshold) << (15 - i));
+	sensorState = (sensorState & ~(0x101 << (7 - i))) //0x101 0000 0001 0000 0001 나머지 유지 1만 바꿈
+			| ((normalized[i + 8] > sensorThreshold) << (7 - i)) // 오른쪽 센서 normalized > sensor threshold 1 아니면 0
+			| ((normalized[i] > sensorThreshold) << (15 - i)); // 왼쪽 센서 normalized > sensor threshold 1 아니면 0
 
 	int32_t weighted_sum = 0;
 	int32_t normalized_value = 0;
-
-	float window_start = position_value / 4000 + 4.5;
-	float window_end = position_value / 4000 + 10.5;
+	//[-30000,300000]-> f(x)-> [0,15] (x+30000)/600000*15 = x/4000 + 7.5
+	float window_start = position_value / 4000 + 4.5; //x/4000 + 7.5 - 3
+	float window_end = position_value / 4000 + 10.5; //x/4000 + 7.5 + 3
 
 	uint8_t current_window_start_index = 17;
 	uint8_t current_window_end_index = 0;

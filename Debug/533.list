@@ -39,9 +39,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  17 .debug_line   00012de8  00000000  00000000  00056e0e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00130d48  00000000  00000000  00069bf6  2**0
+ 18 .debug_str    00130d49  00000000  00000000  00069bf6  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  0019a93e  2**0
+ 19 .comment      00000043  00000000  00000000  0019a93f  2**0
                   CONTENTS, READONLY
  20 .debug_frame  00005b90  00000000  00000000  0019a984  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
@@ -12904,6 +12904,7 @@ __STATIC_INLINE uint32_t Center_State(int32_t position, uint16_t state) {
  80054c6:	17db      	asrs	r3, r3, #31
  80054c8:	1ad3      	subs	r3, r2, r3
  80054ca:	617b      	str	r3, [r7, #20]
+	//포지션 값은 -30000~30000인데 인덱스는 0부터 2000을 더해준 이유는 포지션 중 스케일 4000 중 0~2000은 왼쪽 센서를 2001~4000은 오른쪽으로
 	uint32_t extended_state = (uint32_t) (state);
  80054cc:	887b      	ldrh	r3, [r7, #2]
  80054ce:	613b      	str	r3, [r7, #16]
@@ -13004,7 +13005,7 @@ __STATIC_INLINE uint8_t State_Machine() {
  8005574:	7b7b      	ldrb	r3, [r7, #13]
  8005576:	2b00      	cmp	r3, #0
  8005578:	d064      	beq.n	8005644 <State_Machine+0x158>
-			// 윈도우 내에 4개 이상의 센서에서 라인이 감지되면
+			// 윈도우 내에 4개 이상의 센서에서 라인이 감지되면 또는 마커에 하나라도 감지가 된다면
 			sensorStateSum = Center_State(position_value, sensorState);
  800557a:	4b39      	ldr	r3, [pc, #228]	@ (8005660 <State_Machine+0x174>)
  800557c:	681b      	ldr	r3, [r3, #0]
@@ -14878,9 +14879,9 @@ void Cali_Flash_save() {
  8006298:	0800a964 	.word	0x0800a964
  800629c:	0800aa4c 	.word	0x0800aa4c
 
-080062a0 <Use_Saved_cali>:
+080062a0 <Load_Saved_cali>:
 
-void Use_Saved_cali() {
+void Load_Saved_cali() {
  80062a0:	e92d 41f0 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
  80062a4:	b0b8      	sub	sp, #224	@ 0xe0
  80062a6:	af1e      	add	r7, sp, #120	@ 0x78
@@ -14888,167 +14889,167 @@ void Use_Saved_cali() {
  80062a8:	2300      	movs	r3, #0
  80062aa:	f887 305f 	strb.w	r3, [r7, #95]	@ 0x5f
 	while (CUSTOM_SW_BOTH != (sw = Custom_Switch_Read())) {
- 80062ae:	e0c7      	b.n	8006440 <Use_Saved_cali+0x1a0>
+ 80062ae:	e0c7      	b.n	8006440 <Load_Saved_cali+0x1a0>
 
 		Custom_OLED_Printf(
 				"load cali/2no:l yes:R /3/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/4/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x /5/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/6/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x/g%02x/w%02x",
 				*((uint8_t*) FLASH_ADDR), *((uint8_t*) FLASH_ADDR + 1),
- 80062b0:	4b6c      	ldr	r3, [pc, #432]	@ (8006464 <Use_Saved_cali+0x1c4>)
+ 80062b0:	4b6c      	ldr	r3, [pc, #432]	@ (8006464 <Load_Saved_cali+0x1c4>)
  80062b2:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  80062b4:	469c      	mov	ip, r3
 				*((uint8_t*) FLASH_ADDR), *((uint8_t*) FLASH_ADDR + 1),
- 80062b6:	4b6c      	ldr	r3, [pc, #432]	@ (8006468 <Use_Saved_cali+0x1c8>)
+ 80062b6:	4b6c      	ldr	r3, [pc, #432]	@ (8006468 <Load_Saved_cali+0x1c8>)
  80062b8:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  80062ba:	469e      	mov	lr, r3
 				*((uint8_t*) FLASH_ADDR + 2), *((uint8_t*) FLASH_ADDR + 3),
- 80062bc:	4b6b      	ldr	r3, [pc, #428]	@ (800646c <Use_Saved_cali+0x1cc>)
+ 80062bc:	4b6b      	ldr	r3, [pc, #428]	@ (800646c <Load_Saved_cali+0x1cc>)
  80062be:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  80062c0:	4698      	mov	r8, r3
 				*((uint8_t*) FLASH_ADDR + 2), *((uint8_t*) FLASH_ADDR + 3),
- 80062c2:	4b6b      	ldr	r3, [pc, #428]	@ (8006470 <Use_Saved_cali+0x1d0>)
+ 80062c2:	4b6b      	ldr	r3, [pc, #428]	@ (8006470 <Load_Saved_cali+0x1d0>)
  80062c4:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  80062c6:	657b      	str	r3, [r7, #84]	@ 0x54
 				*((uint8_t*) FLASH_ADDR + 4), *((uint8_t*) FLASH_ADDR + 5),
- 80062c8:	4b6a      	ldr	r3, [pc, #424]	@ (8006474 <Use_Saved_cali+0x1d4>)
+ 80062c8:	4b6a      	ldr	r3, [pc, #424]	@ (8006474 <Load_Saved_cali+0x1d4>)
  80062ca:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  80062cc:	653b      	str	r3, [r7, #80]	@ 0x50
 				*((uint8_t*) FLASH_ADDR + 4), *((uint8_t*) FLASH_ADDR + 5),
- 80062ce:	4b6a      	ldr	r3, [pc, #424]	@ (8006478 <Use_Saved_cali+0x1d8>)
+ 80062ce:	4b6a      	ldr	r3, [pc, #424]	@ (8006478 <Load_Saved_cali+0x1d8>)
  80062d0:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  80062d2:	64fb      	str	r3, [r7, #76]	@ 0x4c
 				*((uint8_t*) FLASH_ADDR + 6), *((uint8_t*) FLASH_ADDR + 7),
- 80062d4:	4b69      	ldr	r3, [pc, #420]	@ (800647c <Use_Saved_cali+0x1dc>)
+ 80062d4:	4b69      	ldr	r3, [pc, #420]	@ (800647c <Load_Saved_cali+0x1dc>)
  80062d6:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  80062d8:	64bb      	str	r3, [r7, #72]	@ 0x48
 				*((uint8_t*) FLASH_ADDR + 6), *((uint8_t*) FLASH_ADDR + 7),
- 80062da:	4b69      	ldr	r3, [pc, #420]	@ (8006480 <Use_Saved_cali+0x1e0>)
+ 80062da:	4b69      	ldr	r3, [pc, #420]	@ (8006480 <Load_Saved_cali+0x1e0>)
  80062dc:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  80062de:	647b      	str	r3, [r7, #68]	@ 0x44
 				*((uint8_t*) FLASH_ADDR + 8), *((uint8_t*) FLASH_ADDR + 9),
- 80062e0:	4b68      	ldr	r3, [pc, #416]	@ (8006484 <Use_Saved_cali+0x1e4>)
+ 80062e0:	4b68      	ldr	r3, [pc, #416]	@ (8006484 <Load_Saved_cali+0x1e4>)
  80062e2:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  80062e4:	643b      	str	r3, [r7, #64]	@ 0x40
 				*((uint8_t*) FLASH_ADDR + 8), *((uint8_t*) FLASH_ADDR + 9),
- 80062e6:	4b68      	ldr	r3, [pc, #416]	@ (8006488 <Use_Saved_cali+0x1e8>)
+ 80062e6:	4b68      	ldr	r3, [pc, #416]	@ (8006488 <Load_Saved_cali+0x1e8>)
  80062e8:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  80062ea:	63fb      	str	r3, [r7, #60]	@ 0x3c
 				*((uint8_t*) FLASH_ADDR + 10), *((uint8_t*) FLASH_ADDR + 11),
- 80062ec:	4b67      	ldr	r3, [pc, #412]	@ (800648c <Use_Saved_cali+0x1ec>)
+ 80062ec:	4b67      	ldr	r3, [pc, #412]	@ (800648c <Load_Saved_cali+0x1ec>)
  80062ee:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  80062f0:	63bb      	str	r3, [r7, #56]	@ 0x38
 				*((uint8_t*) FLASH_ADDR + 10), *((uint8_t*) FLASH_ADDR + 11),
- 80062f2:	4b67      	ldr	r3, [pc, #412]	@ (8006490 <Use_Saved_cali+0x1f0>)
+ 80062f2:	4b67      	ldr	r3, [pc, #412]	@ (8006490 <Load_Saved_cali+0x1f0>)
  80062f4:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  80062f6:	637b      	str	r3, [r7, #52]	@ 0x34
 				*((uint8_t*) FLASH_ADDR + 12), *((uint8_t*) FLASH_ADDR + 13),
- 80062f8:	4b66      	ldr	r3, [pc, #408]	@ (8006494 <Use_Saved_cali+0x1f4>)
+ 80062f8:	4b66      	ldr	r3, [pc, #408]	@ (8006494 <Load_Saved_cali+0x1f4>)
  80062fa:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  80062fc:	633b      	str	r3, [r7, #48]	@ 0x30
 				*((uint8_t*) FLASH_ADDR + 12), *((uint8_t*) FLASH_ADDR + 13),
- 80062fe:	4b66      	ldr	r3, [pc, #408]	@ (8006498 <Use_Saved_cali+0x1f8>)
+ 80062fe:	4b66      	ldr	r3, [pc, #408]	@ (8006498 <Load_Saved_cali+0x1f8>)
  8006300:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  8006302:	62fb      	str	r3, [r7, #44]	@ 0x2c
 				*((uint8_t*) FLASH_ADDR + 14), *((uint8_t*) FLASH_ADDR + 15),
- 8006304:	4b65      	ldr	r3, [pc, #404]	@ (800649c <Use_Saved_cali+0x1fc>)
+ 8006304:	4b65      	ldr	r3, [pc, #404]	@ (800649c <Load_Saved_cali+0x1fc>)
  8006306:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  8006308:	62bb      	str	r3, [r7, #40]	@ 0x28
 				*((uint8_t*) FLASH_ADDR + 14), *((uint8_t*) FLASH_ADDR + 15),
- 800630a:	4b65      	ldr	r3, [pc, #404]	@ (80064a0 <Use_Saved_cali+0x200>)
+ 800630a:	4b65      	ldr	r3, [pc, #404]	@ (80064a0 <Load_Saved_cali+0x200>)
  800630c:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  800630e:	627b      	str	r3, [r7, #36]	@ 0x24
 				*((uint8_t*) FLASH_ADDR + 16), *((uint8_t*) FLASH_ADDR + 17),
- 8006310:	4b64      	ldr	r3, [pc, #400]	@ (80064a4 <Use_Saved_cali+0x204>)
+ 8006310:	4b64      	ldr	r3, [pc, #400]	@ (80064a4 <Load_Saved_cali+0x204>)
  8006312:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  8006314:	623b      	str	r3, [r7, #32]
 				*((uint8_t*) FLASH_ADDR + 16), *((uint8_t*) FLASH_ADDR + 17),
- 8006316:	4b64      	ldr	r3, [pc, #400]	@ (80064a8 <Use_Saved_cali+0x208>)
+ 8006316:	4b64      	ldr	r3, [pc, #400]	@ (80064a8 <Load_Saved_cali+0x208>)
  8006318:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  800631a:	61fb      	str	r3, [r7, #28]
 				*((uint8_t*) FLASH_ADDR + 18), *((uint8_t*) FLASH_ADDR + 19),
- 800631c:	4b63      	ldr	r3, [pc, #396]	@ (80064ac <Use_Saved_cali+0x20c>)
+ 800631c:	4b63      	ldr	r3, [pc, #396]	@ (80064ac <Load_Saved_cali+0x20c>)
  800631e:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  8006320:	61bb      	str	r3, [r7, #24]
 				*((uint8_t*) FLASH_ADDR + 18), *((uint8_t*) FLASH_ADDR + 19),
- 8006322:	4b63      	ldr	r3, [pc, #396]	@ (80064b0 <Use_Saved_cali+0x210>)
+ 8006322:	4b63      	ldr	r3, [pc, #396]	@ (80064b0 <Load_Saved_cali+0x210>)
  8006324:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  8006326:	617b      	str	r3, [r7, #20]
 				*((uint8_t*) FLASH_ADDR + 20), *((uint8_t*) FLASH_ADDR + 21),
- 8006328:	4b62      	ldr	r3, [pc, #392]	@ (80064b4 <Use_Saved_cali+0x214>)
+ 8006328:	4b62      	ldr	r3, [pc, #392]	@ (80064b4 <Load_Saved_cali+0x214>)
  800632a:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  800632c:	613b      	str	r3, [r7, #16]
 				*((uint8_t*) FLASH_ADDR + 20), *((uint8_t*) FLASH_ADDR + 21),
- 800632e:	4b62      	ldr	r3, [pc, #392]	@ (80064b8 <Use_Saved_cali+0x218>)
+ 800632e:	4b62      	ldr	r3, [pc, #392]	@ (80064b8 <Load_Saved_cali+0x218>)
  8006330:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  8006332:	60fb      	str	r3, [r7, #12]
 				*((uint8_t*) FLASH_ADDR + 22), *((uint8_t*) FLASH_ADDR + 23),
- 8006334:	4b61      	ldr	r3, [pc, #388]	@ (80064bc <Use_Saved_cali+0x21c>)
+ 8006334:	4b61      	ldr	r3, [pc, #388]	@ (80064bc <Load_Saved_cali+0x21c>)
  8006336:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  8006338:	60bb      	str	r3, [r7, #8]
 				*((uint8_t*) FLASH_ADDR + 22), *((uint8_t*) FLASH_ADDR + 23),
- 800633a:	4b61      	ldr	r3, [pc, #388]	@ (80064c0 <Use_Saved_cali+0x220>)
+ 800633a:	4b61      	ldr	r3, [pc, #388]	@ (80064c0 <Load_Saved_cali+0x220>)
  800633c:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  800633e:	607b      	str	r3, [r7, #4]
 				*((uint8_t*) FLASH_ADDR + 24), *((uint8_t*) FLASH_ADDR + 25),
- 8006340:	4b60      	ldr	r3, [pc, #384]	@ (80064c4 <Use_Saved_cali+0x224>)
+ 8006340:	4b60      	ldr	r3, [pc, #384]	@ (80064c4 <Load_Saved_cali+0x224>)
  8006342:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  8006344:	603b      	str	r3, [r7, #0]
 				*((uint8_t*) FLASH_ADDR + 24), *((uint8_t*) FLASH_ADDR + 25),
- 8006346:	4b60      	ldr	r3, [pc, #384]	@ (80064c8 <Use_Saved_cali+0x228>)
+ 8006346:	4b60      	ldr	r3, [pc, #384]	@ (80064c8 <Load_Saved_cali+0x228>)
  8006348:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  800634a:	461e      	mov	r6, r3
 				*((uint8_t*) FLASH_ADDR + 26), *((uint8_t*) FLASH_ADDR + 27),
- 800634c:	4b5f      	ldr	r3, [pc, #380]	@ (80064cc <Use_Saved_cali+0x22c>)
+ 800634c:	4b5f      	ldr	r3, [pc, #380]	@ (80064cc <Load_Saved_cali+0x22c>)
  800634e:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  8006350:	461d      	mov	r5, r3
 				*((uint8_t*) FLASH_ADDR + 26), *((uint8_t*) FLASH_ADDR + 27),
- 8006352:	4b5f      	ldr	r3, [pc, #380]	@ (80064d0 <Use_Saved_cali+0x230>)
+ 8006352:	4b5f      	ldr	r3, [pc, #380]	@ (80064d0 <Load_Saved_cali+0x230>)
  8006354:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  8006356:	461c      	mov	r4, r3
 				*((uint8_t*) FLASH_ADDR + 28), *((uint8_t*) FLASH_ADDR + 29),
- 8006358:	4b5e      	ldr	r3, [pc, #376]	@ (80064d4 <Use_Saved_cali+0x234>)
+ 8006358:	4b5e      	ldr	r3, [pc, #376]	@ (80064d4 <Load_Saved_cali+0x234>)
  800635a:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  800635c:	4618      	mov	r0, r3
 				*((uint8_t*) FLASH_ADDR + 28), *((uint8_t*) FLASH_ADDR + 29),
- 800635e:	4b5e      	ldr	r3, [pc, #376]	@ (80064d8 <Use_Saved_cali+0x238>)
+ 800635e:	4b5e      	ldr	r3, [pc, #376]	@ (80064d8 <Load_Saved_cali+0x238>)
  8006360:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  8006362:	4619      	mov	r1, r3
 				*((uint8_t*) FLASH_ADDR + 30), *((uint8_t*) FLASH_ADDR + 31));
- 8006364:	4b5d      	ldr	r3, [pc, #372]	@ (80064dc <Use_Saved_cali+0x23c>)
+ 8006364:	4b5d      	ldr	r3, [pc, #372]	@ (80064dc <Load_Saved_cali+0x23c>)
  8006366:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  8006368:	461a      	mov	r2, r3
 				*((uint8_t*) FLASH_ADDR + 30), *((uint8_t*) FLASH_ADDR + 31));
- 800636a:	4b5d      	ldr	r3, [pc, #372]	@ (80064e0 <Use_Saved_cali+0x240>)
+ 800636a:	4b5d      	ldr	r3, [pc, #372]	@ (80064e0 <Load_Saved_cali+0x240>)
  800636c:	781b      	ldrb	r3, [r3, #0]
 		Custom_OLED_Printf(
  800636e:	931c      	str	r3, [sp, #112]	@ 0x70
@@ -15105,30 +15106,30 @@ void Use_Saved_cali() {
  80063d4:	4643      	mov	r3, r8
  80063d6:	4672      	mov	r2, lr
  80063d8:	4661      	mov	r1, ip
- 80063da:	4842      	ldr	r0, [pc, #264]	@ (80064e4 <Use_Saved_cali+0x244>)
+ 80063da:	4842      	ldr	r0, [pc, #264]	@ (80064e4 <Load_Saved_cali+0x244>)
  80063dc:	f7fe fb7c 	bl	8004ad8 <Custom_OLED_Printf>
 		if (sw == CUSTOM_SW_1) {
  80063e0:	f897 305f 	ldrb.w	r3, [r7, #95]	@ 0x5f
  80063e4:	2b01      	cmp	r3, #1
- 80063e6:	d036      	beq.n	8006456 <Use_Saved_cali+0x1b6>
+ 80063e6:	d036      	beq.n	8006456 <Load_Saved_cali+0x1b6>
 			break;
 		}
 		if (sw == CUSTOM_SW_2) {
  80063e8:	f897 305f 	ldrb.w	r3, [r7, #95]	@ 0x5f
  80063ec:	2b02      	cmp	r3, #2
- 80063ee:	d127      	bne.n	8006440 <Use_Saved_cali+0x1a0>
+ 80063ee:	d127      	bne.n	8006440 <Load_Saved_cali+0x1a0>
 			Custom_OLED_Clear();
  80063f0:	f7fe fa8d 	bl	800490e <Custom_OLED_Clear>
 			for (int i = 0; i < 16; i++) {
  80063f4:	2300      	movs	r3, #0
  80063f6:	667b      	str	r3, [r7, #100]	@ 0x64
- 80063f8:	e00d      	b.n	8006416 <Use_Saved_cali+0x176>
+ 80063f8:	e00d      	b.n	8006416 <Load_Saved_cali+0x176>
 				whiteMax[i] = *(uint8_t*) (FLASH_ADDR + i);
  80063fa:	6e7b      	ldr	r3, [r7, #100]	@ 0x64
  80063fc:	f103 6300 	add.w	r3, r3, #134217728	@ 0x8000000
  8006400:	f503 2380 	add.w	r3, r3, #262144	@ 0x40000
  8006404:	7819      	ldrb	r1, [r3, #0]
- 8006406:	4a38      	ldr	r2, [pc, #224]	@ (80064e8 <Use_Saved_cali+0x248>)
+ 8006406:	4a38      	ldr	r2, [pc, #224]	@ (80064e8 <Load_Saved_cali+0x248>)
  8006408:	6e7b      	ldr	r3, [r7, #100]	@ 0x64
  800640a:	4413      	add	r3, r2
  800640c:	460a      	mov	r2, r1
@@ -15139,18 +15140,18 @@ void Use_Saved_cali() {
  8006414:	667b      	str	r3, [r7, #100]	@ 0x64
  8006416:	6e7b      	ldr	r3, [r7, #100]	@ 0x64
  8006418:	2b0f      	cmp	r3, #15
- 800641a:	ddee      	ble.n	80063fa <Use_Saved_cali+0x15a>
+ 800641a:	ddee      	ble.n	80063fa <Load_Saved_cali+0x15a>
 			}
 			for (int i = 0; i < 16; i++) {
  800641c:	2300      	movs	r3, #0
  800641e:	663b      	str	r3, [r7, #96]	@ 0x60
- 8006420:	e00b      	b.n	800643a <Use_Saved_cali+0x19a>
+ 8006420:	e00b      	b.n	800643a <Load_Saved_cali+0x19a>
 				blackMax[i] = *(uint8_t*) (FLASH_ADDR + i + 16);
  8006422:	6e3a      	ldr	r2, [r7, #96]	@ 0x60
- 8006424:	4b1f      	ldr	r3, [pc, #124]	@ (80064a4 <Use_Saved_cali+0x204>)
+ 8006424:	4b1f      	ldr	r3, [pc, #124]	@ (80064a4 <Load_Saved_cali+0x204>)
  8006426:	4413      	add	r3, r2
  8006428:	7819      	ldrb	r1, [r3, #0]
- 800642a:	4a30      	ldr	r2, [pc, #192]	@ (80064ec <Use_Saved_cali+0x24c>)
+ 800642a:	4a30      	ldr	r2, [pc, #192]	@ (80064ec <Load_Saved_cali+0x24c>)
  800642c:	6e3b      	ldr	r3, [r7, #96]	@ 0x60
  800642e:	4413      	add	r3, r2
  8006430:	460a      	mov	r2, r1
@@ -15161,21 +15162,21 @@ void Use_Saved_cali() {
  8006438:	663b      	str	r3, [r7, #96]	@ 0x60
  800643a:	6e3b      	ldr	r3, [r7, #96]	@ 0x60
  800643c:	2b0f      	cmp	r3, #15
- 800643e:	ddf0      	ble.n	8006422 <Use_Saved_cali+0x182>
+ 800643e:	ddf0      	ble.n	8006422 <Load_Saved_cali+0x182>
 	while (CUSTOM_SW_BOTH != (sw = Custom_Switch_Read())) {
  8006440:	f7fe fe7a 	bl	8005138 <Custom_Switch_Read>
  8006444:	4603      	mov	r3, r0
  8006446:	f887 305f 	strb.w	r3, [r7, #95]	@ 0x5f
  800644a:	f897 305f 	ldrb.w	r3, [r7, #95]	@ 0x5f
  800644e:	2b03      	cmp	r3, #3
- 8006450:	f47f af2e 	bne.w	80062b0 <Use_Saved_cali+0x10>
+ 8006450:	f47f af2e 	bne.w	80062b0 <Load_Saved_cali+0x10>
 			}
 
 		}
 	}
 
 }
- 8006454:	e000      	b.n	8006458 <Use_Saved_cali+0x1b8>
+ 8006454:	e000      	b.n	8006458 <Load_Saved_cali+0x1b8>
 			break;
  8006456:	bf00      	nop
 }
@@ -16139,7 +16140,7 @@ void Motor_L_TIM3_IRQ() {
  8006afa:	461a      	mov	r2, r3
  8006afc:	4b7c      	ldr	r3, [pc, #496]	@ (8006cf0 <Motor_L_TIM3_IRQ+0x210>)
  8006afe:	609a      	str	r2, [r3, #8]
-	MotorL.EncV = MotorL.ErrEnc / TIME * ANGLE_PER_TICK; //차이 /시간 =속도
+	MotorL.EncV = MotorL.ErrEnc / TIME * ANGLE_PER_TICK; //차이 /시간 =속도 단위 시간당 회전 속도 angle_per_tick을 곱한 이유가 각도 에 따른 속도 구하기 (rad/tick)
  8006b00:	4b7b      	ldr	r3, [pc, #492]	@ (8006cf0 <Motor_L_TIM3_IRQ+0x210>)
  8006b02:	689b      	ldr	r3, [r3, #8]
  8006b04:	ee07 3a90 	vmov	s15, r3
@@ -16329,8 +16330,8 @@ void Motor_L_TIM3_IRQ() {
  8006ce2:	3718      	adds	r7, #24
  8006ce4:	46bd      	mov	sp, r7
  8006ce6:	bd80      	pop	{r7, pc}
- 8006ce8:	851ef5e4 	.word	0x851ef5e4
- 8006cec:	403fe67c 	.word	0x403fe67c
+ 8006ce8:	621ce99b 	.word	0x621ce99b
+ 8006cec:	403d205b 	.word	0x403d205b
  8006cf0:	200009a8 	.word	0x200009a8
  8006cf4:	20000454 	.word	0x20000454
  8006cf8:	3a000000 	.word	0x3a000000
@@ -16553,8 +16554,8 @@ void Motor_R_TIM4_IRQ() {
  8006f1a:	3718      	adds	r7, #24
  8006f1c:	46bd      	mov	sp, r7
  8006f1e:	bd80      	pop	{r7, pc}
- 8006f20:	851ef5e4 	.word	0x851ef5e4
- 8006f24:	403fe67c 	.word	0x403fe67c
+ 8006f20:	621ce99b 	.word	0x621ce99b
+ 8006f24:	403d205b 	.word	0x403d205b
  8006f28:	40000c00 	.word	0x40000c00
  8006f2c:	200009cc 	.word	0x200009cc
  8006f30:	3a000000 	.word	0x3a000000
@@ -17460,7 +17461,7 @@ void Sensor_TIM6_IRQ() {
 
 	// TODO: 가끔씩읽으세요 이런 안중요한건 어차피 배터리 측정쪽에 로우패스필터있어서 빨리읽어도 소용x
 	// 그리고 인터럽트 핸들러에서 일 많이하면 안돼(무척중요)
-	batteryVolt = Battery_ADC_Read() * 21 * 3.3 / 4095;
+	batteryVolt = Battery_ADC_Read() * 21 * 3.3 / 4095; //전압분배 해서 21베 하고 4095가 3.3V스케일로 바꾸는 것
  800755e:	f7ff ffa5 	bl	80074ac <Battery_ADC_Read>
  8007562:	4603      	mov	r3, r0
  8007564:	461a      	mov	r2, r3
@@ -17626,7 +17627,7 @@ void Sensor_TIM6_IRQ() {
  8007690:	4a48      	ldr	r2, [pc, #288]	@ (80077b4 <Sensor_TIM6_IRQ+0x2bc>)
  8007692:	54d1      	strb	r1, [r2, r3]
 
-	sensorState = (sensorState & ~(0x101 << (7 - i)))
+	sensorState = (sensorState & ~(0x101 << (7 - i))) //0x101 0000 0001 0000 0001 나머지 유지 1만 바꿈
  8007694:	4b43      	ldr	r3, [pc, #268]	@ (80077a4 <Sensor_TIM6_IRQ+0x2ac>)
  8007696:	781b      	ldrb	r3, [r3, #0]
  8007698:	f1c3 0307 	rsb	r3, r3, #7
@@ -17641,7 +17642,7 @@ void Sensor_TIM6_IRQ() {
  80076b0:	b21b      	sxth	r3, r3
  80076b2:	4013      	ands	r3, r2
  80076b4:	b21a      	sxth	r2, r3
-			| ((normalized[i + 8] > sensorThreshold) << (7 - i))
+			| ((normalized[i + 8] > sensorThreshold) << (7 - i)) // 오른쪽 센서 normalized > sensor threshold 1 아니면 0
  80076b6:	4b3b      	ldr	r3, [pc, #236]	@ (80077a4 <Sensor_TIM6_IRQ+0x2ac>)
  80076b8:	781b      	ldrb	r3, [r3, #0]
  80076ba:	3308      	adds	r3, #8
@@ -17663,7 +17664,7 @@ void Sensor_TIM6_IRQ() {
  80076de:	b21b      	sxth	r3, r3
  80076e0:	4313      	orrs	r3, r2
  80076e2:	b21a      	sxth	r2, r3
-			| ((normalized[i] > sensorThreshold) << (15 - i));
+			| ((normalized[i] > sensorThreshold) << (15 - i)); // 왼쪽 센서 normalized > sensor threshold 1 아니면 0
  80076e4:	4b2f      	ldr	r3, [pc, #188]	@ (80077a4 <Sensor_TIM6_IRQ+0x2ac>)
  80076e6:	781b      	ldrb	r3, [r3, #0]
  80076e8:	4619      	mov	r1, r3
@@ -17686,7 +17687,7 @@ void Sensor_TIM6_IRQ() {
  800770e:	4313      	orrs	r3, r2
  8007710:	b21b      	sxth	r3, r3
  8007712:	b29a      	uxth	r2, r3
-	sensorState = (sensorState & ~(0x101 << (7 - i)))
+	sensorState = (sensorState & ~(0x101 << (7 - i))) //0x101 0000 0001 0000 0001 나머지 유지 1만 바꿈
  8007714:	4b29      	ldr	r3, [pc, #164]	@ (80077bc <Sensor_TIM6_IRQ+0x2c4>)
  8007716:	801a      	strh	r2, [r3, #0]
 
@@ -17696,8 +17697,8 @@ void Sensor_TIM6_IRQ() {
 	int32_t normalized_value = 0;
  800771c:	2300      	movs	r3, #0
  800771e:	61bb      	str	r3, [r7, #24]
-
-	float window_start = position_value / 4000 + 4.5;
+	//[-30000,300000]-> f(x)-> [0,15] (x+30000)/600000*15 = x/4000 + 7.5
+	float window_start = position_value / 4000 + 4.5; //x/4000 + 7.5 - 3
  8007720:	4b28      	ldr	r3, [pc, #160]	@ (80077c4 <Sensor_TIM6_IRQ+0x2cc>)
  8007722:	681b      	ldr	r3, [r3, #0]
  8007724:	4a28      	ldr	r2, [pc, #160]	@ (80077c8 <Sensor_TIM6_IRQ+0x2d0>)
@@ -17717,7 +17718,7 @@ void Sensor_TIM6_IRQ() {
  8007748:	f7f9 fa42 	bl	8000bd0 <__aeabi_d2f>
  800774c:	4603      	mov	r3, r0
  800774e:	607b      	str	r3, [r7, #4]
-	float window_end = position_value / 4000 + 10.5;
+	float window_end = position_value / 4000 + 10.5; //x/4000 + 7.5 + 3
  8007750:	4b1c      	ldr	r3, [pc, #112]	@ (80077c4 <Sensor_TIM6_IRQ+0x2cc>)
  8007752:	681b      	ldr	r3, [r3, #0]
  8007754:	4a1c      	ldr	r2, [pc, #112]	@ (80077c8 <Sensor_TIM6_IRQ+0x2d0>)

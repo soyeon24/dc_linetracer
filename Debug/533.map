@@ -6995,9 +6995,9 @@ LOAD C:/ST/STM32CubeIDE_1.12.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .text.Cali_Flash_save
                 0x08006040      0x260 ./Main/Src/init.o
                 0x08006040                Cali_Flash_save
- .text.Use_Saved_cali
+ .text.Load_Saved_cali
                 0x080062a0      0x250 ./Main/Src/init.o
-                0x080062a0                Use_Saved_cali
+                0x080062a0                Load_Saved_cali
  .text.Flash_Save
                 0x080064f0       0xec ./Main/Src/init.o
  .text.Flash_Load
@@ -8124,7 +8124,7 @@ LOAD C:/ST/STM32CubeIDE_1.12.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_line    0x00010f02      0xe2a ./Main/Src/motor.o
  .debug_line    0x00011d2c     0x10bc ./Main/Src/sensor.o
 
-.debug_str      0x00000000   0x130d48
+.debug_str      0x00000000   0x130d49
  .debug_str     0x00000000   0x122bd4 ./Core/Src/main.o
                              0x125e96 (size before relaxing)
  .debug_str     0x00122bd4       0x2c ./Core/Src/stm32h5xx_hal_msp.o
@@ -8165,11 +8165,11 @@ LOAD C:/ST/STM32CubeIDE_1.12.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
                              0x105c89 (size before relaxing)
  .debug_str     0x00130126      0x42a ./Main/Src/drive.o
                              0x124b1b (size before relaxing)
- .debug_str     0x00130550      0x492 ./Main/Src/init.o
-                             0x125339 (size before relaxing)
- .debug_str     0x001309e2      0x18c ./Main/Src/motor.o
+ .debug_str     0x00130550      0x493 ./Main/Src/init.o
+                             0x12533a (size before relaxing)
+ .debug_str     0x001309e3      0x18c ./Main/Src/motor.o
                              0x1249f9 (size before relaxing)
- .debug_str     0x00130b6e      0x1da ./Main/Src/sensor.o
+ .debug_str     0x00130b6f      0x1da ./Main/Src/sensor.o
                              0x124b6e (size before relaxing)
 
 .comment        0x00000000       0x43

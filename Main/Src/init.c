@@ -254,7 +254,7 @@ void Cali_Flash_save() {
 
 }
 
-void Use_Saved_cali() {
+void Load_Saved_cali() {
 	uint8_t sw = 0;
 	while (CUSTOM_SW_BOTH != (sw = Custom_Switch_Read())) {
 
@@ -387,7 +387,7 @@ In_Menu in_menu[] = { //
 				//
 				{ "/g calibration", Sensor_Calibration }, //
 				{ "/g Cali Flash save", Cali_Flash_save }, //
-				{ "/g load Saved cali", Use_Saved_cali }, //
+				{ "/g load Saved cali", Load_Saved_cali }, //
 				{ "/b tv 0.5", target_v_0_5 }, //
 				{ "/g calibration", Sensor_Calibration }, //
 				{ "/m first drive", Drive_First }, //

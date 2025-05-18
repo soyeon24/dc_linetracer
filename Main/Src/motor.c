@@ -18,7 +18,7 @@
 #define ABS(x) ((x>0) ? x:(-x))
 #define MIN(a, b) ((a > b) ? b : a )
 #define ENCODER_RATIO 2048.f
-#define GEAR (69.f/17.f)
+#define GEAR (63.f/17.f)
 #define WHEEL 0.0405f //4cm라 가정
 #define PI M_PI
 #define TICK_PER_METER (GEAR/(WHEEL*PI))
@@ -119,7 +119,7 @@ void Motor_Stop() {
 void Motor_L_TIM3_IRQ() {
 	MotorL.CurrEncVal = TIM2->CNT;
 	MotorL.ErrEnc = (int32_t) MotorL.CurrEncVal - MotorL.PastEncVal; //엔코더 값 차이 , 앤코더는 그냥 모터 한바퀴 구르면 2048이 됨
-	MotorL.EncV = MotorL.ErrEnc / TIME * ANGLE_PER_TICK; //차이 /시간 =속도
+	MotorL.EncV = MotorL.ErrEnc / TIME * ANGLE_PER_TICK; //차이 /시간 =속도 단위 시간당 회전 속도 angle_per_tick을 곱한 이유가 각도 에 따른 속도 구하기 (rad/tick)
 	MotorL.EncD += MotorL.EncV * TIME; //적분
 
 	MotorL.ComV = MotorL.v * TICK_PER_METER; //meter per time* angle per meter = angle per time
